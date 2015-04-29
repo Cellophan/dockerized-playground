@@ -16,7 +16,7 @@ trap "stacktrace" ERR
 usage() {
   echo "A lot of arguments are needed to start this image. It s recommanded to use an alias:
 
-  alias dsb=\"\$(docker run --rm debsandbox --cmd)\"
+  alias dsb=\"\$(docker run --rm cell/debsandbox --cmd)\"
 
   Extra-option:
     For debug: -e DEBUG=1"
@@ -28,7 +28,7 @@ if [ $# -eq 1 ]; then
      usage
      exit 0 ;;
     --cmd)
-     echo "docker run -ti --rm -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/.X11-unix:/tmp/.X11-unix debsandbox"
+     echo "docker run -ti --rm -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/.X11-unix:/tmp/.X11-unix cell/debsandbox"
      exit 0 ;;
   esac
 fi
