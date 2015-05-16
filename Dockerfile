@@ -4,7 +4,7 @@ ENV TERM screen
 
 #Bascis
 RUN apt-get update && \
-    apt-get install -qy sudo vim
+    apt-get install -qy sudo vim git
 
 #X11
 RUN apt-get install -qy x11-apps
