@@ -28,7 +28,7 @@ if [ $# -eq 1 ]; then
      usage
      exit 0 ;;
     --cmd)
-     echo "docker run -ti --rm -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/.X11-unix:/tmp/.X11-unix cell/debsandbox"
+     echo "docker run -ti --rm -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/.X11-unix:/tmp/.X11-unix cell/debsandbox"
      exit 0 ;;
   esac
 fi
@@ -72,8 +72,9 @@ else
 fi
 export IS_HOME_MOUNTED
 
-groupadd $USER --gid $GID
-useradd  $USER --gid $GID --uid $UID --groups docker
+groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
+groupadd $USER  --gid $GID
+useradd  $USER  --gid $GID --uid $UID --groups docker
 
 export DISPLAY=:0
 export SSH_AUTH_SOCK
