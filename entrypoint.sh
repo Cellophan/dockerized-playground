@@ -11,7 +11,7 @@ stacktrace () {
 }
 trap "stacktrace" ERR 
 
-[ ! "${DEBUG:-unset}" == "unset" ] && set -vx
+[ ! -z "${DEBUG:-}" ] && set -vx
 
 usage() {
   echo "A lot of arguments are needed to start this image. It s recommanded to use an alias:
@@ -47,7 +47,7 @@ if [    $PWD == "/" \
 
   usage
 
-  [ ! "${DEBUG:-unset}" == "unset" ] && exit 1
+  [ ! -z "${DEBUG:-}" == "unset" ] && exit 1
   #Check making the container to not work
   test $PWD != "/"
   test ! -z "$USER"
