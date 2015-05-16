@@ -1,5 +1,5 @@
 FROM debian:8
-MAINTAINER Cell <dockerhub.cell@outer.systems>
+MAINTAINER Cell <docker.cell@outer.systems>
 ENV TERM screen
 
 #Bascis
