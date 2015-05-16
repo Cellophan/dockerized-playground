@@ -19,7 +19,8 @@ usage() {
   alias dsb=\"\$(docker run --rm cell/debsandbox --cmd)\"
 
   Extra-option:
-    For debug: -e DEBUG=1"
+    For debug: -e DEBUG=1
+    For git data: -v $HOME/.gitconfig:$HOME/.gitconfig"
 }
 
 if [ $# -eq 1 ]; then
@@ -79,7 +80,7 @@ useradd  $USER  --gid $GID --uid $UID --groups docker
 export DISPLAY=:0
 export SSH_AUTH_SOCK
 export SSH_AUTH_SOCK
-export DOCKER_CONTAINER=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1)
+export DOCKER_CONTAINER=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1 | sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
 export DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
 
 for f in /etc/profile.d/* ; do
