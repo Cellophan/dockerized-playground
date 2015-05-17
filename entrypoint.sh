@@ -42,6 +42,7 @@ if [    $PWD == "/" \
  -o ! -d "/home/$USER/.ssh" \
  -o -z "$SSH_AUTH_SOCK" \
  -o ! -S "$SSH_AUTH_SOCK" \
+ -o -z "$(which docker)" \
  -o ! -S /var/run/docker.sock \
  -o ! -d "/tmp/.X11-unix" ]; then
   echo -e "Some arguments are not provided.\n"
@@ -57,6 +58,7 @@ if [    $PWD == "/" \
   test -d "/home/$USER/.ssh"
   test ! -z "$SSH_AUTH_SOCK"
   test -S "$SSH_AUTH_SOCK"
+  test ! -z "$(which docker)"
   test -S /var/run/docker.sock
   test -d "/tmp/.X11-unix"
   exit 1
