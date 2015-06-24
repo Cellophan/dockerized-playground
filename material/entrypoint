@@ -63,9 +63,13 @@ else
 fi
 
 #Permit the user to use docker if the socket is mounted
-if [ -S /var/run/docker.sock ]; then
+if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
   groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
   usermod -aG docker $USER
+
+  export DOCKER_CONTAINER=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1 | sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
+  export DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
+  export DOCKER_IMAGE_FRESHNESS=$(expr \( $(date "+%s") - $(date -d "$(docker inspect -f '{{.Created}}' ${DOCKER_IMAGE} | cut -d\  -f1-3)" "+%s") \) )
 fi
 
 #Detect if the home directory is mounted
