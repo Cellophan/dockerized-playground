@@ -1,6 +1,0 @@
-#!/bin/bash -e
-
-DOCKER_CONTAINER=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1 | sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
-DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
-
-echo export DOCKER_CONTAINER=$DOCKER_CONTAINER DOCKER_IMAGE=$DOCKER_IMAGE
