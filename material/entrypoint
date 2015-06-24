@@ -20,7 +20,7 @@ usage() {
   It s recommanded to use the start sript provided at the root of the repo. You can copy or link it to /usr/local/bin .
 
   Tools:
-    $(find /usr/local/bin/ -type f | xargs basename -a | sort | awk '{ printf (" %s,", $0); }')
+    $(echo $(IFS="," ; echo $(find /usr/local/bin/ -type f | xargs basename -a | sort)))
 
   Options:
     For using your user inside the container: -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group)
