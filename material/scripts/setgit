@@ -1,0 +1,5 @@
+#!/bin/bash
+
+git config --global user.email "$(git --no-pager log -1 --pretty=format:"%ae" HEAD)"
+git config --global user.name  "$(git --no-pager log -1 --pretty=format:"%an" HEAD)"
+
