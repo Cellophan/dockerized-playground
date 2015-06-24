@@ -1,0 +1,17 @@
+{
+  "app_name": "nothing",
+  "services": [
+    {
+      "service_name": "one",
+      "components": [
+        {
+          "component_name": "one",
+          "image": "cell/debsandbox",
+          "args": [
+            "sleep 365d"
+          ]
+        }
+      ]
+    }
+  ]
+}

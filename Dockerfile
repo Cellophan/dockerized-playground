@@ -14,9 +14,10 @@ RUN apt-get update && \
 
 #Giantswarm
 RUN curl -sSL http://downloads.giantswarm.io/swarm/clients/$(curl -0 downloads.giantswarm.io/swarm/clients/VERSION)/swarm-$(curl -0 downloads.giantswarm.io/swarm/clients/VERSION)-linux-amd64.tar.gz | tar xzv -C /usr/local/bin
+ADD material/swarm.json /opt/
 
 #Docker-compose
-RUN curl -L https://github.com/docker/compose/releases/download/1.3.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose &&\
+RUN curl -sSL https://github.com/docker/compose/releases/download/1.3.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose &&\
     chmod +x /usr/local/bin/docker-compose
 
 #Entrypoint
