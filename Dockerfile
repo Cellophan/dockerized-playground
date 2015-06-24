@@ -20,9 +20,7 @@ RUN curl -L https://github.com/docker/compose/releases/download/1.3.0/docker-com
     chmod +x /usr/local/bin/docker-compose
 
 #Entrypoint
-RUN touch /etc/profile.d/placeholder.sh &&\
-    chmod a+x /etc/profile.d/placeholder.sh
-
+ADD material/profile.sh /etc/profile.d/
 ADD material/scripts    /usr/local/bin/
 ADD material/entrypoint /entrypoint
 RUN chmod a+x /entrypoint
