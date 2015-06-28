@@ -26,7 +26,7 @@ usage() {
     For using your user inside the container: -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group)
     For being in the current directory: -w \$PWD -v \$PWD:\$PWD
     For SSH: -v \$HOME/.ssh:\$HOME/.ssh -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK
-    For git settings: -v $HOME/.gitconfig:$HOME/.gitconfig
+    For git settings: -v \$HOME/.gitconfig:\$HOME/.gitconfig
     For using docker: -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock
     For allowing X applications: -v /tmp/.X11-unix:/tmp/.X11-unix
     For changing the default shell (if there s no command) -e SHELL=...
