@@ -89,9 +89,12 @@ if [ -S /tmp/.X11-unix ]; then
   export DISPLAY=${DISPLAY:-:0}
 fi
 
-for f in /etc/profile.d/* ; do
-  source $f
+for i in /etc/profile.d/*.sh ; do
+  if [ -r $i ]; then
+    . $i
+  fi
 done
+unset i
 
 echo "$USER ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
