@@ -3,12 +3,12 @@ MAINTAINER Cell <docker.cell@outer.systems>
 ENV TERM screen
 
 #Bascis
-RUN apt-get update && \
-    apt-get install -qy sudo vim git curl jq openssh-client &&\
+RUN apt-get update &&\
+    apt-get install -qy sudo vim git curl jq openssh-client openssh-server &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 #X11
-RUN apt-get update && \
+RUN apt-get update &&\
     apt-get install -qy x11-apps &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
