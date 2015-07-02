@@ -19,10 +19,15 @@ usage() {
   Default options for user are provided by: \"docker run --rm cell/debsandbox --cmd\"
   It s recommanded to use the start sript provided at the root of the repo. You can copy or link it to /usr/local/bin .
 
+  Options:
+    --help: This message.
+    --cmd:  Default docker options to use.
+    --refresh: pull the latest version of this image.
+
   Tools:
     $(find /usr/local/bin/ -type f -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')
 
-  Options:
+  Docker options:
     For using your user inside the container: -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group)
     For being in the current directory: -w \$PWD -v \$PWD:\$PWD
     For SSH: -v \$HOME/.ssh:\$HOME/.ssh -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK
@@ -34,14 +39,14 @@ usage() {
 "
 }
 
-if [ $# -eq 1 ]; then
+if [ $# -ge 1 ]; then
   case "$1" in
     --help)
-     usage
-     exit 0 ;;
+      usage
+      exit 0 ;;
     --cmd)
-     echo "docker run -ti --rm -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/.X11-unix:/tmp/.X11-unix cell/debsandbox"
-     exit 0 ;;
+      echo "docker run -ti --rm -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/.X11-unix:/tmp/.X11-unix cell/debsandbox"
+      exit 0 ;;
   esac
 fi
 
@@ -98,6 +103,11 @@ unset i
 
 echo "$USER ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
+
+if [ "--refresh" == "${1:-}" -a ! -z "${DOCKER_IMAGE:-}" ]; then
+  docker pull ${DOCKER_IMAGE}
+  exit 0
+fi
 
 if [ $# -eq 0 ]; then
   exec su $USER --shell $SHELL
