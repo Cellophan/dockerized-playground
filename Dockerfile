@@ -38,8 +38,8 @@ RUN curl -sSL https://github.com/docker/compose/releases/download/1.3.0/docker-c
     chmod +x /usr/local/bin/docker-compose
 
 #Entrypoint
-ADD material/profile.sh /etc/profile.d/
-ADD material/scripts    /usr/local/bin/
-ADD material/entrypoint /entrypoint
+ADD material/bash.bashrc /etc/
+ADD material/scripts     /usr/local/bin/
+ADD material/entrypoint  /
 ENTRYPOINT ["/entrypoint"]
 

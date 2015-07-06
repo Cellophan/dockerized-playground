@@ -84,6 +84,7 @@ fi
 if [ $(stat -c "%u" /home/${USER}) -eq 0 ]; then
   IS_HOME_MOUNTED=false
   chown ${USER} /home/${USER}
+  [ ! -e /home/${USER}/.bashrc ] && cp /etc/skel/.bashrc /home/${USER}/
 else
   IS_HOME_MOUNTED=true
 fi
