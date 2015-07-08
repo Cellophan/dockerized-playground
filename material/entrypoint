@@ -1,8 +1,7 @@
 #!/bin/bash
-
 set -Eeuo pipefail
 
-stacktrace () { 
+stacktrace() { 
   echo "unhandled error. stacktrace:" 
    i=0 
    while caller $i; do 
@@ -28,12 +27,12 @@ usage() {
     $(find /usr/local/bin/ -type f -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')
 
   Docker options:
-    For using your user inside the container: -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group)
+    For using your user inside the container: -e USER -e UID=\$(id --user) -e GID=\$(id --group)
     For being in the current directory: -w \$PWD -v \$PWD:\$PWD
-    For SSH: -v \$HOME/.ssh:\$HOME/.ssh -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK
+    For SSH: -v \$HOME/.ssh:\$HOME/.ssh -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK
     For git settings: -v \$HOME/.gitconfig:\$HOME/.gitconfig
     For using docker: -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock
-    For allowing X applications: -v /tmp/.X11-unix:/tmp/.X11-unix
+    For allowing X applications: -e XAUTHORITY -v \$XAUTHORITY:\$XAUTHORITY -e DISPLAY=/unix\$DISPLAY -e XSOCK -v /tmp/.X11-unix:/tmp/.X11-unix
     For changing the default shell (if there s no command) -e SHELL=...
     For debug: -e DEBUG=1
 "
@@ -45,7 +44,7 @@ if [ $# -ge 1 ]; then
       usage
       exit 0 ;;
     --cmd)
-      echo "docker run -ti --rm -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER=\$USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=\$SSH_AUTH_SOCK -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/.X11-unix:/tmp/.X11-unix cell/debsandbox"
+      echo "docker run -ti --rm --device /dev/dri -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock -e XAUTHORITY -v \$XAUTHORITY:\$XAUTHORITY -e DISPLAY=/unix\$DISPLAY -e XSOCK -v /tmp/.X11-unix:/tmp/.X11-unix cell/debsandbox"
       exit 0 ;;
   esac
 fi
@@ -81,10 +80,11 @@ fi
 if [ ! -d /home/${USER} ]; then
   mkdir /home/${USER}
 fi
-if [ $(stat -c "%u" /home/${USER}) -eq 0 ]; then
+if [ $(mount | grep "/home/${USER}" | wc -l) -ge 1 ]; then
   IS_HOME_MOUNTED=false
   chown ${USER} /home/${USER}
-  [ ! -e /home/${USER}/.bashrc ] && cp /etc/skel/.bashrc /home/${USER}/
+  [ ! -e /home/${USER}/.bashrc ] && cp /etc/skel/.bashrc /home/${USER}/ && chown ${USER} /home/${USER}/.bashrc
+  [ ! $(mount | grep "/root/.bashrc" | wc -l) -ge 1 ] && cp /etc/skel/.bashrc /root/
 else
   IS_HOME_MOUNTED=true
 fi
