@@ -4,7 +4,7 @@ ENV TERM screen
 
 #Bascis
 RUN apt-get update &&\
-    apt-get install -qy sudo vim git curl jq openssh-client openssh-server &&\
+    apt-get install -qy sudo vim git curl jq strace openssh-client openssh-server &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 #X11
