@@ -2,6 +2,3 @@
 #: "${SAMPLEVAR:="default_value"}"
 #export SAMPLEVAR
 
-dc() {
-  HOME=$PWD docker-compose
-}
