@@ -2,3 +2,6 @@
 #: "${SAMPLEVAR:="default_value"}"
 #export SAMPLEVAR
 
+dsb() {
+  echo "Already in dsb."
+}
