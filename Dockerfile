@@ -1,16 +1,17 @@
 FROM debian:latest
 MAINTAINER Cell <docker.cell@outer.systems>
+LABEL gitrepo="https://github.com/Cellophan/DebSandBox.git"
 ENV TERM screen
 
 #Bascis
 RUN apt-get update &&\
-    apt-get install -qy sudo vim git curl jq strace openssh-client openssh-server &&\
+    DEBIAN_FRONTEND=noninteractive apt-get install -qy sudo vim git curl jq strace openssh-client openssh-server &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 #X11
-RUN apt-get update &&\
-    apt-get install -qy x11-apps &&\
-    apt-get clean -y && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update &&\
+#    apt-get install -qy x11-apps &&\
+#    apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 #Sublime text
 #RUN apt-get update &&\
@@ -23,7 +24,7 @@ RUN apt-get update &&\
 
 #Hugo
 RUN apt-get update &&\
-    apt-get install -qy wget &&\
+    DEBIAN_FRONTEND=noninteractive apt-get install -qy wget &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
     wget -O /tmp/hugo.deb --quiet https://github.com/spf13/hugo/releases/download/v0.14/hugo_0.14_amd64.deb &&\
     dpkg -i /tmp/hugo.deb &&\
