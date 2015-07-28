@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+
+readonly REPO_DIR=/tmp/selfrepo
+readonly REPO_URL=$(docker inspect ${DOCKER_IMAGE} | jq '.[0].Config.Labels.gitrepo' | tr -d \")
+
+echo "Rebuilding image ${DOCKER_IMAGE} based on repo ${REPO_URL}"
+
+git clone ${REPO_URL} ${REPO_DIR}
+docker build --pull --force-rm --no-cache -t ${DOCKER_IMAGE} ${REPO_DIR}
+

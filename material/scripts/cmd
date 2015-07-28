@@ -1,0 +1,5 @@
+#!/bin/bash
+#Provide the default parameters used by the image.
+
+echo "docker run -ti --rm -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock -e XAUTHORITY -v \$XAUTHORITY:\$XAUTHORITY -e DISPLAY=/unix\$DISPLAY -e XSOCK -v /tmp/.X11-unix:/tmp/.X11-unix cell/debsandbox"
+

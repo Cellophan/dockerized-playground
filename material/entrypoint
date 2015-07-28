@@ -12,43 +12,6 @@ trap "stacktrace" ERR
 
 [ ! -z "${DEBUG:-}" ] && set -vx
 
-usage() {
-  echo "A lot of options are needed to start this image.
-
-  Default options for user are provided by: \"docker run --rm cell/debsandbox --cmd\"
-  It s recommanded to use the start sript provided at the root of the repo. You can copy or link it to /usr/local/bin .
-
-  Options:
-    --help: This message.
-    --cmd:  Default docker options to use.
-    --refresh: pull the latest version of this image.
-
-  Tools:
-    $(find /usr/local/bin/ -type f -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')
-
-  Docker options:
-    For using your user inside the container: -e USER -e UID=\$(id --user) -e GID=\$(id --group)
-    For being in the current directory: -w \$PWD -v \$PWD:\$PWD
-    For SSH: -v \$HOME/.ssh:\$HOME/.ssh -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK
-    For git settings: -v \$HOME/.gitconfig:\$HOME/.gitconfig
-    For using docker: -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock
-    For allowing X applications: -e XAUTHORITY -v \$XAUTHORITY:\$XAUTHORITY -e DISPLAY=/unix\$DISPLAY -e XSOCK -v /tmp/.X11-unix:/tmp/.X11-unix
-    For changing the default shell (if there s no command) -e SHELL=...
-    For debug: -e DEBUG=1
-"
-}
-
-if [ $# -ge 1 ]; then
-  case "$1" in
-    --help)
-      usage
-      exit 0 ;;
-    --cmd)
-      echo "docker run -ti --rm --device /dev/dri -w \$PWD -v \$PWD:\$PWD -v /etc/localtime:/etc/localtime:ro -v \$HOME/.ssh:\$HOME/.ssh -e USER -e UID=\$(id --user) -e GID=\$(id --group) -v \$SSH_AUTH_SOCK:\$SSH_AUTH_SOCK -e SSH_AUTH_SOCK -v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock -e XAUTHORITY -v \$XAUTHORITY:\$XAUTHORITY -e DISPLAY=/unix\$DISPLAY -e XSOCK -v /tmp/.X11-unix:/tmp/.X11-unix cell/debsandbox"
-      exit 0 ;;
-  esac
-fi
-
 #Default value
 : ${SHELL:="/bin/bash"}
 export WORKDIR=$PWD
@@ -104,11 +67,6 @@ unset i
 
 echo "$USER ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
-
-if [ "--refresh" == "${1:-}" -a ! -z "${DOCKER_IMAGE:-}" ]; then
-  docker pull ${DOCKER_IMAGE}
-  exit 0
-fi
 
 if [ $# -eq 0 ]; then
   exec su $USER --shell $SHELL
