@@ -3,7 +3,7 @@ MAINTAINER Cell <docker.cell@outer.systems>
 LABEL gitrepo="https://github.com/Cellophan/DebSandBox.git"
 ENV TERM screen
 
-#Bascis
+#Basics
 RUN apt-get update &&\
     DEBIAN_FRONTEND=noninteractive apt-get install -qy sudo vim git curl jq strace openssh-client openssh-server &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/*
