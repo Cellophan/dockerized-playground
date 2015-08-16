@@ -1,14 +1,30 @@
 #!/bin/bash
-set -Eeuo pipefail
 
-stacktrace() { 
-  echo "unhandled error. stacktrace:" 
-   i=0 
-   while caller $i; do 
-     i=$((i+1)) 
-   done 
+function errexit() {
+  local err=$?
+  set +o xtrace
+  local code="${1:-1}"
+  echo "Error in ${BASH_SOURCE[1]}:${BASH_LINENO[0]}. '${BASH_COMMAND}' exited with status $err"
+  # Print out the stack trace described by $function_stack  
+  if [ ${#FUNCNAME[@]} -gt 2 ]
+  then
+    echo "Call tree:"
+    for ((i=1;i<${#FUNCNAME[@]}-1;i++))
+    do
+      echo " $i: ${BASH_SOURCE[$i+1]}:${BASH_LINENO[$i]} ${FUNCNAME[$i]}(...)"
+    done
+  fi
+  echo "Exiting with status ${code}"
+  exit "${code}"
 }
-trap "stacktrace" ERR 
+
+# trap ERR to provide an error handler whenever a command exits nonzero
+#  this is a more verbose version of set -o errexit
+trap 'errexit' ERR
+# setting errtrace allows our ERR trap handler to be propagated to functions,
+#  expansions and subshells
+set -o errtrace
+set -Eeuo pipefail
 
 [ ! -z "${DEBUG:-}" ] && set -vx
 
@@ -31,12 +47,19 @@ fi
 
 #Permit the user to use docker if the socket is mounted
 if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
-  groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
+#  Disable since the docker package create the ocker group
+#  groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
+  groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
   usermod -aG docker $USER
 
-  export DOCKER_CONTAINER=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1 | sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
-  export DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
-  export DOCKER_IMAGE_FRESHNESS=$(expr \( $(date "+%s") - $(date -d "$(docker inspect -f '{{.Created}}' ${DOCKER_IMAGE} | cut -d\  -f1-3)" "+%s") \) )
+  daemon_version="$(echo -e "GET /version HTTP/1.1\n" | socat - /var/run/docker.sock | tail -1 | jq '.Version')"
+  client_version="\"$(docker --version | sed 's/^.* \([.0-9]*\),.*$/\1/')\""
+  if [ "${daemon_version}" == "${client_version}" ]; then
+    export DOCKER_CONTAINER=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1 | sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
+    export DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
+  else
+    echo "Docker will not work: daemon: ${daemon_version}/client: ${client_version}"
+  fi
 fi
 
 #Detect if the home directory is mounted
