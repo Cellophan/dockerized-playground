@@ -21,9 +21,18 @@ RUN apt-get update &&\
 #    ln -s ln -s /opt/Sublime\ Text\ 2/sublime_text /usr/local/bin/ &&\
 #    rm /tmp/sublime.bz2
 
+#go
+RUN apt-get update &&\
+    DEBIAN_FRONTEND=noninteractive apt-get install -qy wget &&\
+    apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
+    wget -O /tmp/go.tar.gz --quiet https://storage.googleapis.com/golang/go1.5.1.linux-amd64.tar.gz &&\
+    tar -C /usr/local -xzf /tmp/go.tar.gz &&\
+    rm /tmp/go.tar.gz &&\
+    ln -s /usr/local/go/bin/*  /usr/local/bin/
+
 #vim-go-ide
 RUN apt-get update &&\
-    DEBIAN_FRONTEND=noninteractive apt-get install -qy vim &&\
+    DEBIAN_FRONTEND=noninteractive apt-get install -qy vim-nox &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
     git clone https://github.com/farazdagi/vim-go-ide.git /etc/skel/.vim_go_runtime
 

@@ -6,7 +6,7 @@ echo "A lot of options are needed to start this image.
   It s recommanded to use the start sript provided at the root of the repo. You can copy or link it to /usr/local/bin .
 
   Options and Tools:
-    $(find /usr/local/bin/ -type f -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')
+    $(find /usr/local/bin/ -maxdepth 1 -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')
 
   Docker options:
     For using your user inside the container: -e USER -e UID=\$(id --user) -e GID=\$(id --group)
