@@ -1,7 +1,6 @@
 FROM debian:latest
 MAINTAINER Cell <docker.cell@outer.systems>
 LABEL gitrepo="https://github.com/Cellophan/DebSandBox.git"
-ENV TERM screen
 
 #Basics
 RUN apt-get update &&\
@@ -21,6 +20,12 @@ RUN apt-get update &&\
 #    tar -C /opt/ -xvjf /tmp/sublime.bz2 &&\
 #    ln -s ln -s /opt/Sublime\ Text\ 2/sublime_text /usr/local/bin/ &&\
 #    rm /tmp/sublime.bz2
+
+#vim-go-ide
+RUN apt-get update &&\
+    DEBIAN_FRONTEND=noninteractive apt-get install -qy vim &&\
+    apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
+    git clone https://github.com/farazdagi/vim-go-ide.git /etc/skel/.vim_go_runtime
 
 #Hugo
 RUN apt-get update &&\
@@ -47,6 +52,7 @@ RUN curl -sSL https://github.com/docker/compose/releases/download/1.4.0/docker-c
 #Entrypoint
 ADD material/bash.bashrc /etc/
 ADD material/scripts     /usr/local/bin/
+ADD material/skel        /etc/skel
 ADD material/entrypoint  /
 ENTRYPOINT ["/entrypoint"]
 

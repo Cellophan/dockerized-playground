@@ -70,11 +70,18 @@ if [ $(mount | grep "/home/${USER}" | wc -l) -ge 1 ]; then
   IS_HOME_MOUNTED=false
   chown ${USER} /home/${USER}
   [ ! -e /home/${USER}/.bashrc ] && cp /etc/skel/.bashrc /home/${USER}/ && chown ${USER} /home/${USER}/.bashrc
-  [ ! $(mount | grep "/root/.bashrc" | wc -l) -ge 1 ] && cp /etc/skel/.bashrc /root/
+  for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
+    dst="/home/${USER}/$(basename $f)"
+    if [ -r $f -a ! -e $dst ]; then
+      cp -r $f $dst
+      chown -R ${USER}. $dst
+    fi
+  done
 else
   IS_HOME_MOUNTED=true
 fi
 export IS_HOME_MOUNTED
+[ ! $(mount | grep "/root/.bashrc" | wc -l) -ge 1 ] && cp /etc/skel/.bashrc /root/
 
 #Declare DISPLAY if the X socket is mounted
 if [ -S /tmp/.X11-unix ]; then
