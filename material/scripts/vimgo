@@ -2,6 +2,11 @@
 
 set -e
 
+if [ "true" == "$IS_HOME_MOUNTED" ]; then
+  echo "I don't work when you mounted home."
+  exit 1
+fi
+
 if [ ! -e "~/.vimrc.go" ]; then
   echo "First start, finishing deployment..."
   sh ~/.vim_go_runtime/bin/install

@@ -70,6 +70,7 @@ if [ $(mount | grep "/home/${USER}" | wc -l) -ge 1 ]; then
   IS_HOME_MOUNTED=false
   chown ${USER} /home/${USER}
   [ ! -e /home/${USER}/.bashrc ] && cp /etc/skel/.bashrc /home/${USER}/ && chown ${USER} /home/${USER}/.bashrc
+
   for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
     dst="/home/${USER}/$(basename $f)"
     if [ -r $f -a ! -e $dst ]; then
