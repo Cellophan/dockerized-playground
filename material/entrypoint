@@ -96,8 +96,17 @@ for i in /etc/profile.d/*.sh ; do
 done
 unset i
 
+#Declare XTERM correctly
+if [ -e /usr/share/terminfo/x/xterm-256color ]; then
+  TERM='xterm-256color'
+else
+  TERM='xterm-color'
+fi
+export TERM
+
 echo "$USER ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
+echo -e "ENV_PATH $PATH\nENV_SUPATH $PATH" >> /etc/login.defs
 
 if [ $# -eq 0 ]; then
   exec su $USER --shell $SHELL
