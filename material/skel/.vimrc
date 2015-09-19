@@ -78,7 +78,6 @@ nmap <C-Left> :bprevious<CR>
 " plugin customizations
 "neocomplete.vim
 let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#background = 'light'
 
 " vim-airline
 set laststatus=2
