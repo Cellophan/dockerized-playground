@@ -1,3 +1,4 @@
+"inspired from https://github.com/mbrt/go-docker-dev/blob/master/fs/home/dev/.vimrc
 syn on
 set hlsearch
 set background=light
