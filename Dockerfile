@@ -79,26 +79,7 @@ RUN echo godoc		&& go get golang.org/x/tools/cmd/godoc &&\
 #    apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
 #    git clone https://github.com/farazdagi/vim-go-ide.git /etc/skel/.vim_go_runtime
 
-#vimgo
-#RUN apt-get update &&\
-#    DEBIAN_FRONTEND=noninteractive apt-get install -qy vim-nox vim git exuberant-ctags &&\
-#    apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
-#    mkdir -p /etc/skel/.vim/bundle/ &&\
-#    cd /etc/skel/.vim/bundle/ &&\
-#    git clone --depth 1 https://github.com/gmarik/Vundle.vim.git &&\
-#    git clone --depth 1 https://github.com/fatih/vim-go.git &&\
-#    git clone --depth 1 https://github.com/fatih/molokai.git &&\
-#    git clone --depth 1 https://github.com/majutsushi/tagbar.git &&\
-#    git clone --depth 1 https://github.com/Shougo/neocomplete.vim.git &&\
-#    git clone --depth 1 https://github.com/scrooloose/nerdtree.git &&\
-#    git clone --depth 1 https://github.com/bling/vim-airline.git &&\
-#    git clone --depth 1 https://github.com/tpope/vim-fugitive.git &&\
-#    git clone --depth 1 https://github.com/jistr/vim-nerdtree-tabs.git &&\
-#    git clone --depth 1 https://github.com/mbbill/undotree.git &&\
-#    git clone --depth 1 https://github.com/Lokaltog/vim-easymotion.git &&\
-#    git clone --depth 1 https://github.com/scrooloose/nerdcommenter.git &&\
-#    find /etc/skel/.vim -type d -name .git | xargs rm -r
-#    ln -s /etc/skel/.vim /root/ && vim -u /etc/skel/.vimrc +PluginInstall +qall
+#vim-go
 RUN apt-get update &&\
     DEBIAN_FRONTEND=noninteractive apt-get install -qy vim-nox git exuberant-ctags &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
