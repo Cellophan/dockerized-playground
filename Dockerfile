@@ -73,12 +73,6 @@ RUN echo godoc		&& go get golang.org/x/tools/cmd/godoc &&\
     echo gotags		&& go get github.com/jstemmer/gotags &&\
     rm -r $GOPATH/*
      
-#vim-go-ide
-#RUN apt-get update &&\
-#    DEBIAN_FRONTEND=noninteractive apt-get install -qy vim-nox &&\
-#    apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
-#    git clone https://github.com/farazdagi/vim-go-ide.git /etc/skel/.vim_go_runtime
-
 #vim-go
 RUN apt-get update &&\
     DEBIAN_FRONTEND=noninteractive apt-get install -qy vim-nox git exuberant-ctags &&\

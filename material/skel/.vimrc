@@ -28,8 +28,9 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'shougo/neocomplete.vim'
 
 Plugin 'scrooloose/nerdtree'
-"Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'xuyuanp/nerdtree-git-plugin'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'scrooloose/syntastic'
 
 " All of your Plugins must be added before the following line
 call vundle#end() " required
@@ -75,12 +76,11 @@ let g:go_fmt_command = "goimports"
 " Inspired from https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/
 nmap <C-Right> :bnext<CR>
 nmap <C-Left> :bprevious<CR>
-
-"Cherypicked from https://github.com/farazdagi/vim-go-ide/blob/master/vimrc/basic.vim
-" Ignore case when searching
+"  Cherypicked from https://github.com/farazdagi/vim-go-ide/blob/master/vimrc/basic.vim
+"    Ignore case when searching
 set ignorecase
 set encoding=utf8
-" highlight trailing space
+"    highlight trailing space
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -88,7 +88,10 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
-" plugin customizations
+"Later see http://stackoverflow.com/questions/2447109/showing-a-different-background-colour-in-vim-past-80-characters
+"set colorcolumn=80,120
+
+"Plugin customizations
 "neocomplete.vim
 let g:neocomplete#enable_at_startup = 1
 
@@ -102,7 +105,7 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
 
 " tagbar
-nmap <F8> :TagbarToggle<CR>
+nmap <F3> :TagbarToggle<CR>
 let g:tagbar_type_go = {
     \ 'ctagstype' : 'go',
     \ 'kinds' : [
@@ -132,8 +135,15 @@ let g:tagbar_type_go = {
     \ }
 
 "NERDTree
-nmap <F7> :NERDTree<CR>
+nmap <F2> :NERDTreeToggle<CR>
 let g:NERDTreeDirArrows = 1
 "let g:NERDTreeDirArrowExpandable = '▸'
 "let g:NERDTreeDirArrowCollapsible = '▾'
+autocmd VimEnter * if !argc() | NERDTree | endif
+
+"Syntastic
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
 
