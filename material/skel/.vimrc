@@ -28,7 +28,7 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'shougo/neocomplete.vim'
 
 Plugin 'scrooloose/nerdtree'
-Plugin 'jistr/vim-nerdtree-tabs'
+"Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'xuyuanp/nerdtree-git-plugin'
 
 " All of your Plugins must be added before the following line
@@ -76,6 +76,18 @@ let g:go_fmt_command = "goimports"
 nmap <C-Right> :bnext<CR>
 nmap <C-Left> :bprevious<CR>
 
+"Cherypicked from https://github.com/farazdagi/vim-go-ide/blob/master/vimrc/basic.vim
+" Ignore case when searching
+set ignorecase
+set encoding=utf8
+" highlight trailing space
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
+
 " plugin customizations
 "neocomplete.vim
 let g:neocomplete#enable_at_startup = 1
@@ -119,6 +131,9 @@ let g:tagbar_type_go = {
     \ 'ctagsargs' : '-sort -silent'
     \ }
 
-"NERDTreeTabs
-nmap <F7> :NERDTreeTabsOpen<CR>
+"NERDTree
+nmap <F7> :NERDTree<CR>
+let g:NERDTreeDirArrows = 1
+"let g:NERDTreeDirArrowExpandable = '▸'
+"let g:NERDTreeDirArrowCollapsible = '▾'
 
