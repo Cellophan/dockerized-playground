@@ -58,7 +58,7 @@ RUN apt-get update &&\
     mkdir /go && chmod a+rw /go
 
 ENV GOBIN /usr/local/go/bin
-ENV PATH $PATH:$GOBIN 
+ENV PATH $PATH:$GOBIN
 ENV GOPATH /go
 
 #Go tools
@@ -72,8 +72,8 @@ RUN echo godoc		&& go get golang.org/x/tools/cmd/godoc &&\
     echo errcheck	&& go get github.com/kisielk/errcheck &&\
     echo gotags		&& go get github.com/jstemmer/gotags &&\
     rm -r $GOPATH/*
-     
-#vim-go
+
+#vim from vim-go and vim-go-ide
 RUN apt-get update &&\
     DEBIAN_FRONTEND=noninteractive apt-get install -qy vim-nox git exuberant-ctags &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
