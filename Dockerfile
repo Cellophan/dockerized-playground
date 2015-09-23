@@ -56,19 +56,20 @@ RUN apt-get update &&\
     wget -O /tmp/go.tar.gz --quiet https://storage.googleapis.com/golang/go1.5.1.linux-amd64.tar.gz &&\
     tar -C /usr/local -xzf /tmp/go.tar.gz &&\
     rm /tmp/go.tar.gz
-ENV GOBIN /usr/local/go/bin
+ENV GOBIN=/usr/local/go/bin
+ENV PATH=$PATH:$GOBIN
 
 #Go tools
-RUN mkdir /tmp/go &&\
-    echo godoc		&& GOPATH=/tmp/go PATH=$PATH:$GOBIN go get golang.org/x/tools/cmd/godoc &&\
-    echo goimports	&& GOPATH=/tmp/go PATH=$PATH:$GOBIN go get golang.org/x/tools/cmd/goimports &&\
-    echo oracle		&& GOPATH=/tmp/go PATH=$PATH:$GOBIN go get golang.org/x/tools/cmd/oracle &&\
-    echo gorename	&& GOPATH=/tmp/go PATH=$PATH:$GOBIN go get golang.org/x/tools/cmd/gorename &&\
-    echo gocode 	&& GOPATH=/tmp/go PATH=$PATH:$GOBIN go get github.com/nsf/gocode &&\
-    echo godef		&& GOPATH=/tmp/go PATH=$PATH:$GOBIN go get github.com/rogpeppe/godef &&\
-    echo golint		&& GOPATH=/tmp/go PATH=$PATH:$GOBIN go get github.com/golang/lint/golint &&\
-    echo errcheck	&& GOPATH=/tmp/go PATH=$PATH:$GOBIN go get github.com/kisielk/errcheck &&\
-    echo gotags		&& GOPATH=/tmp/go PATH=$PATH:$GOBIN go get github.com/jstemmer/gotags &&\
+RUN mkdir /tmp/go && export GOPATH=/tmp/go &&\
+    echo godoc		&& go get golang.org/x/tools/cmd/godoc &&\
+    echo goimports	&& go get golang.org/x/tools/cmd/goimports &&\
+    echo oracle		&& go get golang.org/x/tools/cmd/oracle &&\
+    echo gorename	&& go get golang.org/x/tools/cmd/gorename &&\
+    echo gocode 	&& go get github.com/nsf/gocode &&\
+    echo godef		&& go get github.com/rogpeppe/godef &&\
+    echo golint		&& go get github.com/golang/lint/golint &&\
+    echo errcheck	&& go get github.com/kisielk/errcheck &&\
+    echo gotags		&& go get github.com/jstemmer/gotags &&\
     rm -r /tmp/go
 
 #vim from vim-go and vim-go-ide
