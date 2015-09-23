@@ -5,7 +5,7 @@ function errexit() {
   set +o xtrace
   local code="${1:-1}"
   echo "Error in ${BASH_SOURCE[1]}:${BASH_LINENO[0]}. '${BASH_COMMAND}' exited with status $err"
-  # Print out the stack trace described by $function_stack  
+  # Print out the stack trace described by $function_stack
   if [ ${#FUNCNAME[@]} -gt 2 ]
   then
     echo "Call tree:"
@@ -71,6 +71,7 @@ if [ $(mount | grep "/home/${USER} " | wc -l) -ne 1 ]; then
   chown ${USER} /home/${USER}
   [ ! -e /home/${USER}/.bashrc ] && cp /etc/skel/.bashrc /home/${USER}/ && chown ${USER} /home/${USER}/.bashrc
 
+  #Import the files present in the skel directory if the ~ is not mounted and if it doesn't already exist (because it has been mounted :)
   for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
     dst="/home/${USER}/$(basename $f)"
     if [ -r $f -a ! -e $dst ]; then
@@ -89,13 +90,6 @@ if [ -S /tmp/.X11-unix ]; then
   export DISPLAY=${DISPLAY:-:0}
 fi
 
-for i in /etc/profile.d/*.sh ; do
-  if [ -r $i ]; then
-    . $i
-  fi
-done
-unset i
-
 #Declare XTERM correctly
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
   TERM='xterm-256color'
@@ -104,8 +98,19 @@ else
 fi
 export TERM
 
-echo "$USER ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
+#Give root access to the user
+echo "ALL ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
+
+#If there's a profile file, execute it.
+for i in /etc/profile.d/*.sh ; do
+  if [ -r $i ]; then
+    . $i
+  fi
+done
+unset i
+
+#Propagate the PATH variable
 echo -e "ENV_PATH $PATH\nENV_SUPATH $PATH" >> /etc/login.defs
 
 if [ $# -eq 0 ]; then
