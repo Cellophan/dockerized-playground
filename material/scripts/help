@@ -2,8 +2,9 @@
 
 echo "A lot of options are needed to start this image.
 
-  Default options for user are provided by: \"docker run --rm cell/debsandbox --cmd\"
-  It s recommanded to use the start sript provided at the root of the repo. You can copy or link it to /usr/local/bin .
+  Default options for user are provided by: \"docker run --rm cell/debsandbox cmd\"
+  It s recommanded to use the start script provided at the root of the repo. You can install it by using:
+    docker run --rm --entrypoint install -v /usr/local/bin:/installdir cell/debsandbox
 
   Options and Tools:
     $(find /usr/local/bin/ -maxdepth 1 -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')

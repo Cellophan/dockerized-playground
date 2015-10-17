@@ -1,0 +1,20 @@
+#!/bin/bash
+#Script to deploy payload/cell on the machine.
+set -e
+
+readonly INSTALL_DIR=/installdir
+
+usage() {
+  echo "This script can only be used like this: docker run --rm --entrypoint install -v /usr/local/bin:${INSTALL_DIR} cell/debsandbox"
+}
+
+if [ ! -d ${INSTALL_DIR} -o "root" != "$(whoami)" ]; then
+  usage
+  exit 1
+fi
+
+chmod a+x ${INSTALL_DIR}/cell
+cp /opt/payload/cell ${INSTALL_DIR}/
+
+echo "Installer in place, now you can use the command cell."
+
