@@ -33,7 +33,8 @@ set -Eeuo pipefail
 export WORKDIR=$PWD
 export SSH_AUTH_SOCK
 export SSH_AUTH_SOCK
-[ ! -z "${DEBUG:-}" ] && echo "SSH_AUTH_SOCK: $SSH_AUTH_SOCK"
+[ ! -z "${DEBUG:-}" ] && echo "SSH_AUTH_SOCK: ${SSH_AUTH_SOCK:-}"
+[ ! -z "${DEBUG:-}" ] && echo "USER: ${USER:-} UID: ${UID:-} GID: ${GID:-}"
 
 #Create user
 if [ -z "${USER:-}" -o -z "${UID:-}" -o -z "${GID:-}" ]; then
@@ -45,6 +46,7 @@ else
   useradd  $USER --gid $GID --uid $UID
 fi
 
+[ ! -z "${DEBUG:-}" ] && echo "docker binary: $(which docker)"
 #Permit the user to use docker if the socket is mounted
 if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 #  Disable since the docker package create the ocker group

@@ -13,8 +13,8 @@ if [ ! -d ${INSTALL_DIR} -o "root" != "$(whoami)" ]; then
   exit 1
 fi
 
-chmod a+x ${INSTALL_DIR}/cell
-cp /opt/payload/cell ${INSTALL_DIR}/
+cp /opt/payload/dsb ${INSTALL_DIR}/
+chmod a+x ${INSTALL_DIR}/dsb
 
-echo "Installer in place, now you can use the command cell."
+echo "Installer in place, now you can use the command dsb."
 
