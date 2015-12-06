@@ -31,7 +31,6 @@ set -Eeuo pipefail
 export WORKDIR=$PWD
 export SSH_AUTH_SOCK
 [ ! -z "${DEBUG:-}" ] && echo "SSH_AUTH_SOCK: ${SSH_AUTH_SOCK:-}"
-[ ! -z "${DEBUG:-}" ] && echo "USER: ${USER:-} UID: ${UID:-} GID: ${GID:-}"
 
 #Create user
 if [ -z "${USER:-}" -o -z "${UID:-}" -o -z "${GID:-}" ]; then
@@ -66,7 +65,10 @@ fi
 if [ $(mount | grep "/home/${USER} " | wc -l) -ne 1 ]; then
 	IS_HOME_MOUNTED=false
 	chown ${USER} /home/${USER}
-	[ ! -e /home/${USER}/.bashrc ] && cp /etc/skel/.bashrc /home/${USER}/ && chown ${USER} /home/${USER}/.bashrc
+	if [ ! -e /home/${USER}/.bashrc ]; then
+		cp /etc/skel/.bashrc /home/${USER}/
+		chown ${USER} /home/${USER}/.bashrc
+	fi
 
 	#Import the files present in the skel directory if the ~ is not mounted and if it doesn't already exist (because it has been mounted :)
 	for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
@@ -80,7 +82,9 @@ else
 	IS_HOME_MOUNTED=true
 fi
 export IS_HOME_MOUNTED
-[ ! $(mount | grep "/root/.bashrc" | wc -l) -ge 1 ] && cp /etc/skel/.bashrc /root/
+if [ ! $(mount | grep "/root/.bashrc" | wc -l) -ge 1 ]; then
+	cp /etc/skel/.bashrc /root/
+fi
 
 #Declare DISPLAY if the X socket is mounted
 if [ -S /tmp/.X11-unix ]; then
