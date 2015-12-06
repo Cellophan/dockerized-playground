@@ -1,21 +1,19 @@
 #!/bin/bash
 
 function errexit() {
-  local err=$?
-  set +o xtrace
-  local code="${1:-1}"
-  echo "Error in ${BASH_SOURCE[1]}:${BASH_LINENO[0]}. '${BASH_COMMAND}' exited with status $err"
-  # Print out the stack trace described by $function_stack
-  if [ ${#FUNCNAME[@]} -gt 2 ]
-  then
-    echo "Call tree:"
-    for ((i=1;i<${#FUNCNAME[@]}-1;i++))
-    do
-      echo " $i: ${BASH_SOURCE[$i+1]}:${BASH_LINENO[$i]} ${FUNCNAME[$i]}(...)"
-    done
-  fi
-  echo "Exiting with status ${code}"
-  exit "${code}"
+	local err=$?
+	set +o xtrace
+	local code="${1:-1}"
+	echo "Error in ${BASH_SOURCE[1]}:${BASH_LINENO[0]}. '${BASH_COMMAND}' exited with status $err"
+	# Print out the stack trace described by $function_stack
+	if [ ${#FUNCNAME[@]} -gt 2 ]; then
+		echo "Call tree:"
+		for ((i=1;i<${#FUNCNAME[@]}-1;i++)); do
+			echo " $i: ${BASH_SOURCE[$i+1]}:${BASH_LINENO[$i]} ${FUNCNAME[$i]}(...)"
+		done
+	fi
+	echo "Exiting with status ${code}"
+	exit "${code}"
 }
 
 # trap ERR to provide an error handler whenever a command exits nonzero
@@ -38,12 +36,12 @@ export SSH_AUTH_SOCK
 
 #Create user
 if [ -z "${USER:-}" -o -z "${UID:-}" -o -z "${GID:-}" ]; then
-  USER=notme
-  groupadd $USER
-  useradd  $USER --gid $USER
+	USER=notme
+	groupadd $USER
+	useradd  $USER --gid $USER
 else
-  groupadd $USER --gid $GID
-  useradd  $USER --gid $GID --uid $UID
+	groupadd $USER --gid $GID
+	useradd  $USER --gid $GID --uid $UID
 fi
 
 [ ! -z "${DEBUG:-}" ] && echo "docker binary: $(which docker)"
@@ -51,52 +49,50 @@ fi
 if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 #  Disable since the docker package create the ocker group
 #  groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
-  groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
-  usermod -aG docker $USER
-
-  daemon_version="$(echo -e "GET /version HTTP/1.1\n" | socat - /var/run/docker.sock | tail -1 | jq '.Version')"
-  client_version="\"$(docker --version | sed 's/^.* \([.0-9]*\),.*$/\1/')\""
-  if [ "${daemon_version}" == "${client_version}" ]; then
-    export DOCKER_CONTAINER=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1 | sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
-    export DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
-  else
-    echo "Docker will not work: daemon: ${daemon_version}/client: ${client_version}"
-  fi
+	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
+	usermod -aG docker $USER
+	client_version="\"$(docker --version | sed 's/^.* \([.0-9]*\),.*$/\1/')\""
+	if [ "${daemon_version}" == "${client_version}" ]; then
+		export DOCKER_CONTAINER=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1 | sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
+		export DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
+	else
+		echo "Docker will not work: daemon: ${daemon_version}/client: ${client_version}"
+	fi
 fi
 
 #Detect if the home directory is mounted
 if [ ! -d /home/${USER} ]; then
-  mkdir /home/${USER}
+	mkdir /home/${USER}
 fi
 if [ $(mount | grep "/home/${USER} " | wc -l) -ne 1 ]; then
-  IS_HOME_MOUNTED=false
-  chown ${USER} /home/${USER}
-  [ ! -e /home/${USER}/.bashrc ] && cp /etc/skel/.bashrc /home/${USER}/ && chown ${USER} /home/${USER}/.bashrc
+	IS_HOME_MOUNTED=false
+	chown ${USER} /home/${USER}
+	[ ! -e /home/${USER}/.bashrc ] && cp /etc/skel/.bashrc /home/${USER}/ && chown ${USER} /home/${USER}/.bashrc
 
-  #Import the files present in the skel directory if the ~ is not mounted and if it doesn't already exist (because it has been mounted :)
-  for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
-    dst="/home/${USER}/$(basename $f)"
-    if [ -r $f -a ! -e $dst ]; then
-      cp -r $f $dst
-      chown -R ${USER}. $dst
-    fi
-  done
+	#Import the files present in the skel directory if the ~ is not mounted and if it doesn't already exist (because it has been mounted :)
+	for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
+		dst="/home/${USER}/$(basename $f)"
+		if [ -r $f -a ! -e $dst ]; then
+			cp -r $f $dst
+			chown -R ${USER}. $dst
+		fi
+	done
 else
-  IS_HOME_MOUNTED=true
+	IS_HOME_MOUNTED=true
 fi
 export IS_HOME_MOUNTED
 [ ! $(mount | grep "/root/.bashrc" | wc -l) -ge 1 ] && cp /etc/skel/.bashrc /root/
 
 #Declare DISPLAY if the X socket is mounted
 if [ -S /tmp/.X11-unix ]; then
-  export DISPLAY=${DISPLAY:-:0}
+	export DISPLAY=${DISPLAY:-:0}
 fi
 
 #Declare XTERM correctly
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
-  TERM='xterm-256color'
+	TERM='xterm-256color'
 else
-  TERM='xterm-color'
+	TERM='xterm-color'
 fi
 export TERM
 
@@ -106,9 +102,9 @@ chmod 0440 /etc/sudoers.d/full-sudo
 
 #If there's a profile file, execute it.
 for i in /etc/profile.d/*.sh ; do
-  if [ -r $i ]; then
-    . $i
-  fi
+	if [ -r $i ]; then
+		. $i
+	fi
 done
 unset i
 
@@ -116,9 +112,9 @@ unset i
 echo -e "ENV_PATH $PATH\nENV_SUPATH $PATH" >> /etc/login.defs
 
 if [ $# -eq 0 ]; then
-  exec su $USER --shell $SHELL
+	exec su $USER --shell $SHELL
 else
-  exec su $USER <<EOF
+	exec su $USER <<EOF
 $@
 EOF
 
