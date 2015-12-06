@@ -26,13 +26,13 @@ set -Eeuo pipefail
 
 [ ! -z "${DEBUG:-}" ] && set -vx
 
-#Default value
+# Default value
 : ${SHELL:="/bin/bash"}
 export WORKDIR=$PWD
 export SSH_AUTH_SOCK
 [ ! -z "${DEBUG:-}" ] && echo "SSH_AUTH_SOCK: ${SSH_AUTH_SOCK:-}"
 
-#Create user
+# Create user
 if [ -z "${USER:-}" -o -z "${UID:-}" -o -z "${GID:-}" ]; then
 	USER=notme
 	groupadd $USER
@@ -43,10 +43,10 @@ else
 fi
 
 [ ! -z "${DEBUG:-}" ] && echo "docker binary: $(which docker)"
-#Permit the user to use docker if the socket is mounted
+# Permit the user to use docker if the socket is mounted
 if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
-#  Disable since the docker package create the ocker group
-#  groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
+	# Disable since the docker package create the ocker group
+	# groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
 	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
 	usermod -aG docker $USER
 	client_version="\"$(docker --version | sed 's/^.* \([.0-9]*\),.*$/\1/')\""
@@ -58,7 +58,7 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 	fi
 fi
 
-#Detect if the home directory is mounted
+# Detect if the home directory is mounted
 if [ ! -d /home/${USER} ]; then
 	mkdir /home/${USER}
 fi
@@ -70,7 +70,7 @@ if [ $(mount | grep "/home/${USER} " | wc -l) -ne 1 ]; then
 		chown ${USER} /home/${USER}/.bashrc
 	fi
 
-	#Import the files present in the skel directory if the ~ is not mounted and if it doesn't already exist (because it has been mounted :)
+	# Import the files present in the skel directory
 	for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
 		dst="/home/${USER}/$(basename $f)"
 		if [ -r $f -a ! -e $dst ]; then
@@ -80,18 +80,19 @@ if [ $(mount | grep "/home/${USER} " | wc -l) -ne 1 ]; then
 	done
 else
 	IS_HOME_MOUNTED=true
+	echo "The home directory is mounted so the feature including files in it are disabled."
 fi
 export IS_HOME_MOUNTED
 if [ ! $(mount | grep "/root/.bashrc" | wc -l) -ge 1 ]; then
 	cp /etc/skel/.bashrc /root/
 fi
 
-#Declare DISPLAY if the X socket is mounted
+# Declare DISPLAY if the X socket is mounted
 if [ -S /tmp/.X11-unix ]; then
 	export DISPLAY=${DISPLAY:-:0}
 fi
 
-#Declare XTERM correctly
+# Declare XTERM correctly
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
 	TERM='xterm-256color'
 else
@@ -99,11 +100,11 @@ else
 fi
 export TERM
 
-#Give root access to the user
+# Give root access to the user
 echo "ALL ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
 
-#If there's a profile file, execute it.
+# If there's a profile file, execute it.
 for i in /etc/profile.d/*.sh ; do
 	if [ -r $i ]; then
 		. $i
@@ -111,7 +112,7 @@ for i in /etc/profile.d/*.sh ; do
 done
 unset i
 
-#Propagate the PATH variable
+# Propagate the PATH variable
 echo -e "ENV_PATH $PATH\nENV_SUPATH $PATH" >> /etc/login.defs
 
 if [ $# -eq 0 ]; then
