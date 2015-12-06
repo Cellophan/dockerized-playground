@@ -49,9 +49,16 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 	# groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
 	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
 	usermod -aG docker $USER
+
+	daemon_version="$(echo -e "GET /version HTTP/1.1\n" | socat - /var/run/docker.sock | tail -1 | jq '.Version')"
 	client_version="\"$(docker --version | sed 's/^.* \([.0-9]*\),.*$/\1/')\""
 	if [ "${daemon_version}" == "${client_version}" ]; then
-		export DOCKER_CONTAINER=$(cat /proc/self/cgroup | grep "docker" | sed s/\\//\\n/g | tail -1 | sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
+		export DOCKER_CONTAINER=$( \
+			cat /proc/self/cgroup \
+			| grep "docker" \
+			| sed s/\\//\\n/g \
+			| tail -1 \
+			| sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
 		export DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
 	else
 		echo "Docker will not work: daemon: ${daemon_version}/client: ${client_version}"
