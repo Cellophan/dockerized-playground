@@ -30,7 +30,6 @@ set -Eeuo pipefail
 : ${SHELL:="/bin/bash"}
 export WORKDIR=$PWD
 export SSH_AUTH_SOCK
-export SSH_AUTH_SOCK
 [ ! -z "${DEBUG:-}" ] && echo "SSH_AUTH_SOCK: ${SSH_AUTH_SOCK:-}"
 [ ! -z "${DEBUG:-}" ] && echo "USER: ${USER:-} UID: ${UID:-} GID: ${GID:-}"
 
