@@ -1,28 +1,6 @@
 #!/bin/bash
 
-function errexit() {
-	local err=$?
-	set +o xtrace
-	local code="${1:-1}"
-	echo "Error in ${BASH_SOURCE[1]}:${BASH_LINENO[0]}. '${BASH_COMMAND}' exited with status $err"
-	# Print out the stack trace described by $function_stack
-	if [ ${#FUNCNAME[@]} -gt 2 ]; then
-		echo "Call tree:"
-		for ((i=1;i<${#FUNCNAME[@]}-1;i++)); do
-			echo " $i: ${BASH_SOURCE[$i+1]}:${BASH_LINENO[$i]} ${FUNCNAME[$i]}(...)"
-		done
-	fi
-	echo "Exiting with status ${code}"
-	exit "${code}"
-}
-
-# trap ERR to provide an error handler whenever a command exits nonzero
-#  this is a more verbose version of set -o errexit
-trap 'errexit' ERR
-# setting errtrace allows our ERR trap handler to be propagated to functions,
-#  expansions and subshells
-set -o errtrace
-set -Eeuo pipefail
+. /lib/stacktrace.sh
 
 [ ! -z "${DEBUG:-}" ] && set -vx
 
@@ -50,8 +28,13 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
 	usermod -aG docker $USER
 
-	daemon_version="$(echo -e "GET /version HTTP/1.1\n" | socat - /var/run/docker.sock | tail -1 | jq '.Version')"
-	client_version="\"$(docker --version | sed 's/^.* \([.0-9]*\),.*$/\1/')\""
+	daemon_version="$( \
+		echo -e "GET /version HTTP/1.1\n" \
+		| socat - /var/run/docker.sock \
+		| tail -1 \
+		| jq '.Version')"
+	client_version="\"$(docker --version | \
+		sed 's/^.* \([.0-9]*\),.*$/\1/')\""
 	if [ "${daemon_version}" == "${client_version}" ]; then
 		export DOCKER_CONTAINER=$( \
 			cat /proc/self/cgroup \
