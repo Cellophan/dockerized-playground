@@ -6,18 +6,18 @@
 
 # Default value
 : ${SHELL:="/bin/bash"}
-export WORKDIR=$PWD
+export WORKDIR=${PWD}
 export SSH_AUTH_SOCK
 [ ! -z "${DEBUG:-}" ] && echo "SSH_AUTH_SOCK: ${SSH_AUTH_SOCK:-}"
 
 # Create user
 if [ -z "${USER:-}" -o -z "${UID:-}" -o -z "${GID:-}" ]; then
 	USER=notme
-	groupadd $USER
-	useradd  $USER --gid $USER
+	groupadd ${USER}
+	useradd  ${USER} --gid ${USER}
 else
-	groupadd $USER --gid $GID
-	useradd  $USER --gid $GID --uid $UID
+	groupadd ${USER} --gid ${GID}
+	useradd  ${USER} --gid ${GID} --uid ${UID}
 fi
 
 [ ! -z "${DEBUG:-}" ] && echo "docker binary: $(which docker)"
@@ -26,7 +26,7 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 	# Disable since the docker package create the ocker group
 	# groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
 	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
-	usermod -aG docker $USER
+	usermod -aG docker ${USER}
 
 	daemon_version="$( \
 		echo -e "GET /version HTTP/1.1\n" \
@@ -103,12 +103,12 @@ done
 unset i
 
 # Propagate the PATH variable
-echo -e "ENV_PATH $PATH\nENV_SUPATH $PATH" >> /etc/login.defs
+echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >> /etc/login.defs
 
 if [ $# -eq 0 ]; then
-	exec su $USER --shell $SHELL
+	exec su ${USER} --shell ${SHELL}
 else
-	exec su $USER <<EOF
+	exec su ${USER} <<EOF
 $@
 EOF
 
