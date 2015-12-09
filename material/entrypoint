@@ -6,9 +6,9 @@
 
 # Default value
 : ${SHELL:="/bin/bash"}
-export WORKDIR=${PWD}
-export SSH_AUTH_SOCK
-[ ! -z "${DEBUG:-}" ] && echo "SSH_AUTH_SOCK: ${SSH_AUTH_SOCK:-}"
+: ${DEFAULT_CMD:=""}
+WORKDIR=${PWD}
+export WORKDIR SSH_AUTH_SOCK
 
 # Create user
 if [ -z "${USER:-}" -o -z "${UID:-}" -o -z "${GID:-}" ]; then
@@ -17,7 +17,7 @@ if [ -z "${USER:-}" -o -z "${UID:-}" -o -z "${GID:-}" ]; then
 	useradd  ${USER} --gid ${USER}
 else
 	groupadd ${USER} --gid ${GID}
-	useradd  ${USER} --gid ${GID} --uid ${UID}
+	useradd  ${USER} --gid ${USER} --uid ${UID}
 fi
 
 [ ! -z "${DEBUG:-}" ] && echo "docker binary: $(which docker)"
@@ -33,8 +33,9 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 		| socat - /var/run/docker.sock \
 		| tail -1 \
 		| jq '.Version')"
-	client_version="\"$(docker --version | \
-		sed 's/^.* \([.0-9]*\),.*$/\1/')\""
+	client_version="\"$( \
+		docker --version \
+		| sed 's/^.* \([.0-9]*\),.*$/\1/')\""
 	if [ "${daemon_version}" == "${client_version}" ]; then
 		export DOCKER_CONTAINER=$( \
 			cat /proc/self/cgroup \
@@ -73,14 +74,16 @@ else
 	echo "The home directory is mounted so the feature including files in it are disabled."
 fi
 export IS_HOME_MOUNTED
+
 if [ ! $(mount | grep "/root/.bashrc" | wc -l) -ge 1 ]; then
 	cp /etc/skel/.bashrc /root/
 fi
 
+# Has to be tested again (xhost can be mandatory... has to be tested)
 # Declare DISPLAY if the X socket is mounted
-if [ -S /tmp/.X11-unix ]; then
-	export DISPLAY=${DISPLAY:-:0}
-fi
+#if [ -S /tmp/.X11-unix ]; then
+#	export DISPLAY=${DISPLAY:-:0}
+#fi
 
 # Declare XTERM correctly
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
@@ -105,12 +108,34 @@ unset i
 # Propagate the PATH variable
 echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >> /etc/login.defs
 
+# If there s no arguments
 if [ $# -eq 0 ]; then
-	exec su ${USER} --shell ${SHELL}
+	if [ -z ${DEFAULT_CMD} ]; then
+		exec su ${USER} --shell ${SHELL}
+	else
+		exec su ${USER} <<EOF
+${DEFAULT_CMD}
+EOF
+	fi
+# If there some argument
 else
-	exec su ${USER} <<EOF
+	# If the first arguments is a script known in the image
+	if [ $(which ${1}) ]; then
+		# Then launch it as it is.
+		exec su ${USER} <<EOF
 $@
 EOF
-
+	else
+		# Else we should use the DEFAULT_CMD
+		if [ -z ${DEFAULT_CMD} ]; then
+			exec su ${USER} <<EOF
+$@
+EOF
+		else
+			exec su ${USER} <<EOF
+${DEFAULT_CMD} $@
+EOF
+		fi
+	fi
 fi
 
