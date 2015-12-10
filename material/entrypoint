@@ -117,10 +117,10 @@ if [ $# -eq 0 ]; then
 ${DEFAULT_CMD}
 EOF
 	fi
-# If there some argument
+# If there some argument(s)
 else
-	# If the first arguments is a script known in the image
-	if [ $(which ${1}) ]; then
+	# If the first arguments is a only a command and it can be found in the image
+	if [ "${1}" == "${1##*/}" -a ! -z "$(which ${1##*/})" ]; then
 		# Then launch it as it is.
 		exec su ${USER} <<EOF
 $@
