@@ -113,17 +113,17 @@ if [ $# -eq 0 ]; then
 	if [ -z ${DEFAULT_CMD} ]; then
 		exec su ${USER} --shell ${SHELL}
 	else
-		exec su ${USER} --shell ${SHELL} <<< "${DEFAULT_CMD}"
+		exec su ${USER} <<< "${DEFAULT_CMD}"
 	fi
 # If there some argument(s)
 else
 	# If the first arguments is a only a command and it can be found in the image
 	if [ "${1}" == "${1##*/}" -a ! -z "$(which ${1##*/})" ]; then
 		# Then launch it as it is.
-		exec su ${USER} --shell ${SHELL} <<< "$@"
+		exec su ${USER} <<< "$@"
 	else
 		# Else we should use the DEFAULT_CMD  even if it s empty
-		exec su ${USER} --shell ${SHELL} <<< "${DEFAULT_CMD} $@"
+		exec su ${USER} <<< "${DEFAULT_CMD} $@"
 	fi
 fi
 
