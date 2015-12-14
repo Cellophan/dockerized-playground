@@ -23,7 +23,7 @@ fi
 [ ! -z "${DEBUG:-}" ] && echo "docker binary: $(which docker)"
 # Permit the user to use docker if the socket is mounted
 if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
-	# Disable since the docker package create the ocker group
+	# Disable since the docker package create the docker group
 	# groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
 	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
 	usermod -aG docker ${USER}
@@ -45,7 +45,7 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 			| sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
 		export DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
 	else
-		echo "Docker will not work: daemon: ${daemon_version}/client: ${client_version}"
+		echo "Docker will not work because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
 	fi
 fi
 
@@ -56,10 +56,6 @@ fi
 if [ $(mount | grep "/home/${USER} " | wc -l) -ne 1 ]; then
 	IS_HOME_MOUNTED=false
 	chown ${USER} /home/${USER}
-	if [ ! -e /home/${USER}/.bashrc ]; then
-		cp /etc/skel/.bashrc /home/${USER}/
-		chown ${USER} /home/${USER}/.bashrc
-	fi
 
 	# Import the files present in the skel directory
 	for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
@@ -75,17 +71,13 @@ else
 fi
 export IS_HOME_MOUNTED
 
-if [ ! $(mount | grep "/root/.bashrc" | wc -l) -ge 1 ]; then
-	cp /etc/skel/.bashrc /root/
-fi
-
 # Has to be tested again (xhost can be mandatory... has to be tested)
 # Declare DISPLAY if the X socket is mounted
 #if [ -S /tmp/.X11-unix ]; then
 #	export DISPLAY=${DISPLAY:-:0}
 #fi
 
-# Declare XTERM correctly
+# Declare TERM correctly
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
 	TERM='xterm-256color'
 else
@@ -93,7 +85,7 @@ else
 fi
 export TERM
 
-# Give root access to the user
+# Give root access to the everybody
 echo "ALL ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
 
