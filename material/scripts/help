@@ -10,7 +10,7 @@ echo "A lot of options are needed to start this image.
     $(find /usr/local/bin/ -maxdepth 1 -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')
 
   Packages:
-     $(cat /var/log/apt/history.log | grep "apt-get install" | sed 's/^.*-qy //' | awk '{ printf("%s ", $0);}')
+  $(cat /var/log/apt/history.log | grep "apt-get install -qy" | sed 's/^.*-qy //' | awk '{ printf("%s ", $0);}')
 
   Docker options:
     For using your user inside the container: -e USER -e UID=\$(id --user) -e GID=\$(id --group)
