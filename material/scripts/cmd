@@ -2,6 +2,7 @@
 #Provide the default parameters used by the image.
 
 echo "docker run -ti --rm \
+	-h dsb \
 	-w \$PWD -v \$PWD:\$PWD \
 	-v /etc/localtime:/etc/localtime:ro \
 	-v \$HOME/.ssh:\$HOME/.ssh \
