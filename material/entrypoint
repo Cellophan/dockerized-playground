@@ -44,6 +44,7 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 			| tail -1 \
 			| sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
 		DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
+		export DOCKER_AVAILABLE=true
 	else
 		echo "Docker will not work because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
 	fi
