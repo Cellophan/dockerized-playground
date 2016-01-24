@@ -1,11 +1,10 @@
 #!/bin/bash
-#Script to deploy payload/cell on the machine.
+#Script to deploy payload/* on the machine.
 set -e
-
 readonly INSTALL_DIR=/installdir
 
 usage() {
-  echo "This script can only be used like this: docker run --rm --entrypoint install -v /usr/local/bin:${INSTALL_DIR} cell/debsandbox"
+  echo "This script can only be used like this: docker run --rm --entrypoint install -v /usr/local/bin:${INSTALL_DIR} ${DOCKER_IMAGE}"
 }
 
 if [ ! -d ${INSTALL_DIR} -o "root" != "$(whoami)" ]; then
@@ -13,8 +12,8 @@ if [ ! -d ${INSTALL_DIR} -o "root" != "$(whoami)" ]; then
   exit 1
 fi
 
-cp /opt/payload/dsb ${INSTALL_DIR}/
-chmod a+x ${INSTALL_DIR}/dsb
+cp /opt/payload/install/* ${INSTALL_DIR}/
+chmod a+x ${INSTALL_DIR}/*
 
-echo "Installer in place, now you can use the command dsb."
+echo "Installer in place, now you can use the command(s): $(find /usr/local/bin/ -maxdepth 1 -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')"
 
