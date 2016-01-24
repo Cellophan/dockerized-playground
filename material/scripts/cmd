@@ -9,5 +9,5 @@ echo "docker run -ti --rm \
 	-e USER -e UID=\$(id --user) -e GID=\$(id --group) \
 	-v \$(which docker):\$(which docker) -v /var/run/docker.sock:/var/run/docker.sock \
 	$@ \
-	cell/debsandbox"
+	${DOCKER_IMAGE}"
 

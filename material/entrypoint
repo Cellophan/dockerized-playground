@@ -43,11 +43,12 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 			| sed s/\\//\\n/g \
 			| tail -1 \
 			| sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
-		export DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
+		DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
 	else
 		echo "Docker will not work because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
 	fi
 fi
+export DOCKER_IMAGE
 
 # Detect if the home directory is mounted
 if [ ! -d /home/${USER} ]; then

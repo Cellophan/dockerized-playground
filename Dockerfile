@@ -1,5 +1,6 @@
 FROM debian:latest
 MAINTAINER Cell <maintainer.docker.cell@outer.systems>
+ENV DOCKER_IMAGE="cell/debsandbox"
 
 #Basics
 RUN apt-get update &&\
