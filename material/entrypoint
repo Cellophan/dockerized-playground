@@ -39,10 +39,9 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 	if [ "${daemon_version}" == "${client_version}" ]; then
 		export DOCKER_CONTAINER=$( \
 			cat /proc/self/cgroup \
-			| grep "docker" \
-			| sed s/\\//\\n/g \
-			| tail -1 \
-			| sed 's/^.*-\([a-fA-F0-9]*\)\..*$/\1/')
+			| grep "docker/" \
+			| sed 's/^.*docker\/\([0-9a-f]*\)$/\1/' \
+			| tail -1)
 		DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
 		export DOCKER_AVAILABLE=true
 	else
