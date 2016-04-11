@@ -45,7 +45,7 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 		DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
 		export DOCKER_AVAILABLE=true
 	else
-		echo "Docker will not work because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
+		echo "Docker interfacing is at risk because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
 	fi
 fi
 export DOCKER_IMAGE
@@ -103,7 +103,7 @@ echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >> /etc/login.defs
 
 # If there s no arguments
 if [ $# -eq 0 ]; then
-	if [ -z ${DEFAULT_CMD} ]; then
+	if [ -z "${DEFAULT_CMD}" ]; then
 		exec su ${USER} --shell ${SHELL}
 	else
 		exec su ${USER} <<< "${DEFAULT_CMD}"
