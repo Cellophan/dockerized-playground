@@ -36,17 +36,16 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 	client_version="\"$( \
 		docker --version \
 		| sed 's/^.* \([.0-9]*\),.*$/\1/')\""
-	if [ "${daemon_version}" == "${client_version}" ]; then
-		export DOCKER_CONTAINER=$( \
-			cat /proc/self/cgroup \
-			| grep "docker/" \
-			| sed 's/^.*docker\/\([0-9a-f]*\)$/\1/' \
-			| tail -1)
-		DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
-		export DOCKER_AVAILABLE=true
-	else
+	if [ "${daemon_version}" =! "${client_version}" ]; then
 		echo "Docker interfacing is at risk because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
 	fi
+	export DOCKER_CONTAINER=$( \
+		cat /proc/self/cgroup \
+		| grep "docker/" \
+		| sed 's/^.*docker\/\([0-9a-f]*\)$/\1/' \
+		| tail -1)
+	DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
+	export DOCKER_AVAILABLE=true
 fi
 export DOCKER_IMAGE
 
@@ -72,11 +71,11 @@ else
 fi
 export IS_HOME_MOUNTED
 
-# Has to be tested again (xhost can be mandatory... has to be tested)
 # Declare DISPLAY if the X socket is mounted
-#if [ -S /tmp/.X11-unix ]; then
-#	export DISPLAY=${DISPLAY:-:0}
-#fi
+# xhost +<container ip> is needed on the host side.
+if [ -S /tmp/.X11-unix ]; then
+	export DISPLAY=${DISPLAY:-:0}
+fi
 
 # Declare TERM correctly
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
