@@ -21,7 +21,6 @@ function stacktrace() {
 trap 'stacktrace' ERR
 # setting errtrace allows our ERR trap handler to be propagated to functions,
 #  expansions and subshells
-set -o errtrace
 set -Eeuo pipefail
 
 
