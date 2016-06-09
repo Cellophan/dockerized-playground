@@ -36,7 +36,7 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 	client_version="\"$( \
 		docker --version \
 		| sed 's/^.* \([.0-9]*\),.*$/\1/')\""
-	if [ "${daemon_version}" =! "${client_version}" ]; then
+	if [ "${daemon_version}" != "${client_version}" ]; then
 		echo "Docker interfacing is at risk because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
 	fi
 	export DOCKER_CONTAINER=$( \
@@ -103,8 +103,10 @@ echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >> /etc/login.defs
 # If there s no arguments
 if [ $# -eq 0 ]; then
 	if [ -z "${DEFAULT_CMD}" ]; then
+		set +e
 		exec su ${USER} --shell ${SHELL}
 	else
+		set +e
 		exec su ${USER} <<< "${DEFAULT_CMD}"
 	fi
 # If there some argument(s)
@@ -112,9 +114,11 @@ else
 	# If the first arguments is a only a command and it can be found in the image
 	if [ "${1}" == "${1##*/}" -a ! -z "$(which ${1##*/})" ]; then
 		# Then launch it as it is.
+		set +e
 		exec su ${USER} <<< "$@"
 	else
 		# Else we should use the DEFAULT_CMD  even if it s empty
+		set +e
 		exec su ${USER} <<< "${DEFAULT_CMD} $@"
 	fi
 fi
