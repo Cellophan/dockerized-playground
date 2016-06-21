@@ -28,23 +28,24 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
 	usermod -aG docker ${USER}
 
-	daemon_version="$( \
-		echo -e "GET /version HTTP/1.1\n" \
-		| socat - /var/run/docker.sock \
-		| tail -1 \
-		| jq '.Version')"
-	client_version="\"$( \
-		docker --version \
-		| sed 's/^.* \([.0-9]*\),.*$/\1/')\""
-	if [ "${daemon_version}" != "${client_version}" ]; then
-		echo "Docker interfacing is at risk because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
-	fi
-	export DOCKER_CONTAINER=$( \
-		cat /proc/self/cgroup \
-		| grep "docker/" \
-		| sed 's/^.*docker\/\([0-9a-f]*\)$/\1/' \
-		| tail -1)
-	DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
+#	daemon_version="$( \
+#		echo -e "GET /version HTTP/1.1\n" \
+#		| socat - /var/run/docker.sock \
+#		| tail -1 \
+#		| jq '.Version')"
+#	client_version="\"$( \
+#		docker --version \
+#		| sed 's/^.* \([.0-9]*\),.*$/\1/')\""
+#	if [ "${daemon_version}" != "${client_version}" ]; then
+#		echo "Docker interfacing is at risk because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
+#	fi
+#	export DOCKER_CONTAINER=$( \
+#		cat /proc/self/cgroup \
+#		| grep "docker/" \
+#		| sed 's/^.*docker\/\([0-9a-f]*\)$/\1/' \
+#		| tail -1)
+#	DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
+
 	export DOCKER_AVAILABLE=true
 fi
 export DOCKER_IMAGE
@@ -67,7 +68,7 @@ if [ $(mount | grep "/home/${USER} " | wc -l) -ne 1 ]; then
 	done
 else
 	IS_HOME_MOUNTED=true
-	echo "The home directory is mounted so the feature including files in it are disabled."
+	echo "The home directory is mounted so the features depending on files in it are disabled."
 fi
 export IS_HOME_MOUNTED
 
@@ -103,23 +104,23 @@ echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >> /etc/login.defs
 # If there s no arguments
 if [ $# -eq 0 ]; then
 	if [ -z "${DEFAULT_CMD}" ]; then
-		set +e
-		exec su ${USER} --shell ${SHELL}
+#		exec su ${USER} --shell ${SHELL}
+		su ${USER} --shell ${SHELL}
 	else
-		set +e
-		exec su ${USER} <<< "${DEFAULT_CMD}"
+#		exec su ${USER} <<< "${DEFAULT_CMD}"
+		su ${USER} <<< "${DEFAULT_CMD}"
 	fi
 # If there some argument(s)
 else
 	# If the first arguments is a only a command and it can be found in the image
 	if [ "${1}" == "${1##*/}" -a ! -z "$(which ${1##*/})" ]; then
 		# Then launch it as it is.
-		set +e
-		exec su ${USER} <<< "$@"
+#		exec su ${USER} <<< "$@"
+		su ${USER} <<< "$@"
 	else
 		# Else we should use the DEFAULT_CMD  even if it s empty
-		set +e
-		exec su ${USER} <<< "${DEFAULT_CMD} $@"
+#		exec su ${USER} <<< "${DEFAULT_CMD} $@"
+		su ${USER} <<< "${DEFAULT_CMD} $@"
 	fi
 fi
 
