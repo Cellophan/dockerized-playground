@@ -7,18 +7,16 @@
 # Default value
 : ${SHELL:="/bin/bash"}
 : ${DEFAULT_CMD:=""}
+: ${USER:="burner"}
+: ${uid:=1001}
+: ${GID:=1001}
+[ $UID -ne 0 ] && uid=$UID
+
 WORKDIR=${PWD}
 export WORKDIR SSH_AUTH_SOCK
 
-# Create user
-if [ -z "${USER:-}" -o -z "${UID:-}" -o -z "${GID:-}" ]; then
-	USER=notme
-	groupadd ${USER}
-	useradd  ${USER} --gid ${USER}
-else
-	groupadd ${USER} --gid ${GID}
-	useradd  ${USER} --gid ${USER} --uid ${UID}
-fi
+groupadd ${USER} --gid ${GID}
+useradd  ${USER} --gid ${USER} --uid ${uid}
 
 [ ! -z "${DEBUG:-}" ] && echo "docker binary: $(which docker)"
 # Permit the user to use docker if the socket is mounted
