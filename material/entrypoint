@@ -21,28 +21,8 @@ useradd  ${USER} --gid ${USER} --uid ${uid}
 [ ! -z "${DEBUG:-}" ] && echo "docker binary: $(which docker)"
 # Permit the user to use docker if the socket is mounted
 if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
-	# Disable since the docker package create the docker group
-	# groupadd docker --gid $(stat --format='%g' /var/run/docker.sock)
 	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
 	usermod -aG docker ${USER}
-
-#	daemon_version="$( \
-#		echo -e "GET /version HTTP/1.1\n" \
-#		| socat - /var/run/docker.sock \
-#		| tail -1 \
-#		| jq '.Version')"
-#	client_version="\"$( \
-#		docker --version \
-#		| sed 's/^.* \([.0-9]*\),.*$/\1/')\""
-#	if [ "${daemon_version}" != "${client_version}" ]; then
-#		echo "Docker interfacing is at risk because of version mismatch: daemon: ${daemon_version}/client: ${client_version}"
-#	fi
-#	export DOCKER_CONTAINER=$( \
-#		cat /proc/self/cgroup \
-#		| grep "docker/" \
-#		| sed 's/^.*docker\/\([0-9a-f]*\)$/\1/' \
-#		| tail -1)
-#	DOCKER_IMAGE=$(docker inspect -f '{{.Config.Image}}' ${DOCKER_CONTAINER})
 
 	export DOCKER_AVAILABLE=true
 fi
