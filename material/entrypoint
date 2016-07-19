@@ -24,7 +24,8 @@ if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
 	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
 	usermod -aG docker ${USER}
 
-	export DOCKER_AVAILABLE=true
+	docker version &>>/dev/null || return=$?
+	[ ${return:-0} -eq 0 ] && export DOCKER_AVAILABLE=true
 fi
 
 # Detect if the home directory is mounted
@@ -84,7 +85,6 @@ if [ ! -z "${maybebin}" -a "${maybebin}" == "${maybebin##*/}" -a ! -z "$(which $
 	unset DEFAULT_CMD SHELL
 fi
 
-return=
 gosu ${USER} $(echo ${DEFAULT_CMD:-${SHELL:-}} ${@}) || return=$?
-exit $return
+exit ${return:-0}
 
