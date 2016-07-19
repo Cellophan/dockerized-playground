@@ -101,34 +101,13 @@ unset i
 # Propagate the PATH variable
 echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >> /etc/login.defs
 
-# If there s no arguments
-return=
-if [ $# -eq 0 ]; then
-	if [ -z "${DEFAULT_CMD}" ]; then
-#		exec su ${USER} --shell ${SHELL}
-# 		su ${USER} --shell ${SHELL} || true
-		gosu ${USER} ${SHELL} || return=$?
-	else
-#		exec su ${USER} <<< "${DEFAULT_CMD}"
-# 		su ${USER} <<< "${DEFAULT_CMD}" || true
-		gosu ${USER} ${DEFAULT_CMD} || return=$?
-	fi
-# If there some argument(s)
-else
-	# If the first arguments is a only a command and it can be found in the image
-	if [ "${1}" == "${1##*/}" -a ! -z "$(which ${1##*/})" ]; then
-		# Then launch it as it is.
-#		exec su ${USER} <<< "$@"
-# 		su ${USER} <<< "$@" || true
-		gosu ${USER} "$@" || return=$?
-	else
-		# Else we should use the DEFAULT_CMD  even if it s empty
-#		exec su ${USER} <<< "${DEFAULT_CMD} $@"
-# 		su ${USER} <<< "${DEFAULT_CMD} $@" || true
-		gosu ${USER} "${DEFAULT_CMD} $@" || return=$?
-	fi
+# Is the first arg something to execute?
+maybebin="${1:-}"
+if [ ! -z "${maybebin}" -a "${maybebin}" == "${maybebin##*/}" -a ! -z "$(which ${maybebin##*/})" ]; then
+	unset DEFAULT_CMD SHELL
 fi
 
-# gosu ${USER} ${SHELL} || return=$?
+return=
+gosu ${USER} $(echo ${DEFAULT_CMD:-${SHELL:-}} ${@}) || return=$?
 exit $return
 
