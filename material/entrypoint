@@ -2,9 +2,10 @@
 
 . /lib/stacktrace.sh
 
-[ ! -z "${DEBUG:-}" ] && set -vx
+[ -n "${DEBUG:-}" ] && set -vx
 
 # Default value
+: ${TERM:='xterm-color'}
 : ${SHELL:="/bin/bash"}
 : ${DEFAULT_CMD:=""}
 : ${USER:="burner"}
@@ -19,9 +20,8 @@ export WORKDIR SSH_AUTH_SOCK
 groupadd ${USER} --gid ${GID}
 useradd  ${USER} --gid ${USER} --uid ${uid} --home-dir ${HOME}
 
-[ ! -z "${DEBUG:-}" ] && echo "docker binary: $(which docker)"
 # Permit the user to use docker if the socket is mounted
-if [ -S /var/run/docker.sock -a ! -z "$(which docker)" ]; then
+if [ -S /var/run/docker.sock -a -n "$(which docker)" ]; then
 	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
 	usermod -aG docker ${USER}
 
@@ -35,7 +35,6 @@ if [ ! -d ${HOME} ]; then
 fi
 # Detect if the home directory is mounted
 if [ $(mount | grep "${HOME} " | wc -l) -ne 1 ]; then
-	IS_HOME_MOUNTED=false
 	chown ${USER} ${HOME}
 
 	# Import the files present in the skel directory
@@ -47,24 +46,15 @@ if [ $(mount | grep "${HOME} " | wc -l) -ne 1 ]; then
 		fi
 	done
 else
-	IS_HOME_MOUNTED=true
+	export IS_HOME_MOUNTED=true
 	echo "The home directory is mounted so the features depending on files in it are disabled." >&2
 fi
-export IS_HOME_MOUNTED
 
 # Declare DISPLAY if the X socket is mounted
 # xhost +<container ip> is needed on the host side.
 if [ -S /tmp/.X11-unix ]; then
 	export DISPLAY=${DISPLAY:-:0}
 fi
-
-# Declare TERM correctly
-if [ -e /usr/share/terminfo/x/xterm-256color ]; then
-	TERM='xterm-256color'
-else
-	TERM='xterm-color'
-fi
-export TERM
 
 # Give root access to the everybody
 echo "ALL ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
@@ -83,7 +73,7 @@ echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >> /etc/login.defs
 
 # Is the first arg something to execute?
 maybebin="${1:-}"
-if [ ! -z "${maybebin}" -a "${maybebin}" == "${maybebin##*/}" -a ! -z "$(which ${maybebin##*/})" ]; then
+if [ -n "${maybebin}" -a "${maybebin}" == "${maybebin##*/}" -a -n "$(which ${maybebin##*/})" ]; then
 	unset DEFAULT_CMD SHELL
 fi
 
