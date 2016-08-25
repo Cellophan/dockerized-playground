@@ -15,7 +15,7 @@
 [ ${HOME:-/root} == "/root" ] && HOME="/home/${USER}"
 
 WORKDIR=${PWD}
-export WORKDIR SSH_AUTH_SOCK
+export WORKDIR SSH_AUTH_SOCK TERM
 
 groupadd ${USER} --gid ${GID}
 useradd  ${USER} --gid ${USER} --uid ${uid} --home-dir ${HOME}

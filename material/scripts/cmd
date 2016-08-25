@@ -8,6 +8,7 @@ echo -n "docker run -ti --rm \
 	-v \$HOME/.ssh:\$HOME/.ssh \
 	-e USER -e UID=\$(id --user) -e GID=\$(id --group) \
 	-v /var/run/docker.sock:/var/run/docker.sock \
+	-e TERM \
 	$@ \
 	${DOCKER_IMAGE}"
 
