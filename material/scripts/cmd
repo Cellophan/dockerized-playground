@@ -3,7 +3,7 @@
 
 echo -n "docker run -ti --rm \
 	-h \$(basename \${0}) \
-	-w \$PWD -v \$PWD:\$PWD \
+	-w \"\$PWD\" -v \"\$PWD\":\"\$PWD\" \
 	-v /etc/localtime:/etc/localtime:ro \
 	-v \$HOME/.ssh:\$HOME/.ssh \
 	-e USER -e UID=\$(id --user) -e GID=\$(id --group) \
