@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM ubuntu:16.10
 ENV DOCKER_IMAGE="cell/debsandbox"
 
 #Basics
