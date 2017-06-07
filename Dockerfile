@@ -1,5 +1,5 @@
 FROM ubuntu:16.10
-ENV DOCKER_IMAGE="cell/debsandbox"
+ENV DOCKER_IMAGE="cell/playground"
 
 #Basics
 RUN apt-get update &&\
