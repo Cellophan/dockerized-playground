@@ -1,0 +1,5 @@
+#!/bin/bash
+
+eval $(docker run --rm -ti --entrypoint cmd cell/playground) $@
+
+

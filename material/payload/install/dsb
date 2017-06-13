@@ -1,5 +1,0 @@
-#!/bin/bash
-
-eval $(docker run --rm -ti cell/debsandbox cmd) $
-
-
