@@ -22,7 +22,7 @@ RUN curl -sSL -o /usr/local/bin/docker https://master.dockerproject.org/linux/x8
 RUN chmod a+x /usr/local/bin/docker
 
 
-FROM ubuntu:16.10
+FROM ubuntu
 ENV DOCKER_IMAGE="cell/playground"
 
 COPY --from=gosu   /usr/local/bin/* /usr/local/bin/
