@@ -1,4 +1,4 @@
-FROM ubuntu as gosu
+FROM ubuntu:rolling as gosu
 
 # From https://github.com/tianon/gosu
 ENV GOSU_VERSION 1.9
@@ -15,14 +15,14 @@ RUN set -x \
     && gosu nobody true \
     && apt-get purge -y --auto-remove ca-certificates wget
 
-FROM ubuntu as docker
+FROM ubuntu:rolling as docker
 RUN apt update
 RUN DEBIAN_FRONTEND=noninteractive apt install -qy --no-install-recommends curl ca-certificates
 RUN curl -sSL -o /usr/local/bin/docker https://master.dockerproject.org/linux/x86_64/docker
 RUN chmod a+x /usr/local/bin/docker
 
 
-FROM ubuntu
+FROM ubuntu:rolling
 ENV DOCKER_IMAGE="cell/playground"
 
 COPY --from=gosu   /usr/local/bin/* /usr/local/bin/
