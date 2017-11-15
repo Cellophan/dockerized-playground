@@ -26,8 +26,13 @@ if [ -S /var/run/docker.sock -a -n "$(which docker)" ]; then
 		groupadd docker
 	fi
 
-	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
-	usermod -aG docker ${USER}
+	gid=$(stat --format='%g' /var/run/docker.sock)
+	if [[ $gid -eq 0 ]]; then
+		usermod -aG root ${USER}
+	else
+		groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
+		usermod -aG docker ${USER}
+	fi
 
 	docker version &>>/dev/null || return=$?
 	[ ${return:-0} -eq 0 ] && export DOCKER_AVAILABLE=true
