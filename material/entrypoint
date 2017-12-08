@@ -21,24 +21,30 @@ groupadd ${USER} --gid ${GID}
 useradd  ${USER} --gid ${USER} --uid ${uid} --home-dir ${HOME}
 
 # Permit the user to use docker if the socket is mounted
-if [ -S /var/run/docker.sock -a -n "$(which docker)" ]; then
+if [[ -S /var/run/docker.sock && -n "$(which docker)" ]]; then
 	if ! getent group docker; then
 		groupadd docker
 	fi
 
-	groupmod --gid $(stat --format='%g' /var/run/docker.sock) docker
-	usermod -aG docker ${USER}
+  # on docker4mac, the docker.sock is owned by root.
+  gid=$(stat --format='%g' /var/run/docker.sock)
+  if [[ $gid -eq 0 ]]; then
+    usermod -aG root ${USER}
+  else
+    groupmod --gid $gid docker
+    usermod -aG docker ${USER}
+  fi
 
 	docker version &>>/dev/null || return=$?
 	[ ${return:-0} -eq 0 ] && export DOCKER_AVAILABLE=true
 fi
 
 #Assure that the home directory exists
-if [ ! -d ${HOME} ]; then
+if [[ ! -d ${HOME} ]]; then
 	mkdir ${HOME}
 fi
 # Detect if the home directory is mounted
-if [ $(mount | grep "${HOME} " | wc -l) -ne 1 ]; then
+if [[ $(mount | grep "${HOME} " | wc -l) -ne 1 ]]; then
 	chown ${USER} ${HOME}
 
 	# Import the files present in the skel directory
@@ -56,17 +62,17 @@ fi
 
 # Declare DISPLAY if the X socket is mounted
 # xhost +<container ip> is needed on the host side.
-if [ -S /tmp/.X11-unix ]; then
+if [[ -S /tmp/.X11-unix ]]; then
 	export DISPLAY=${DISPLAY:-:0}
 fi
 
-# Give root access to the everybody
+# Give root access to everybody
 echo "ALL ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
 
 # If there's a profile file, execute it.
 for i in /etc/profile.d/*.sh ; do
-	if [ -r $i ]; then
+	if [[ -r $i ]]; then
 		. $i
 	fi
 done

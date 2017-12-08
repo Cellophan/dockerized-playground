@@ -30,7 +30,7 @@ COPY --from=docker /usr/local/bin/* /usr/local/bin/
 
 #Basics
 RUN apt update &&\
-    DEBIAN_FRONTEND=noninteractive apt install -qy sudo vim git curl jq strace openssh-client openssh-server &&\
+    DEBIAN_FRONTEND=noninteractive apt install -qy sudo vim git curl jq openssh-client &&\
     apt clean -y && rm -rf /var/lib/apt/lists/*
 
 COPY material/scripts     /usr/local/bin
