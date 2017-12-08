@@ -22,9 +22,9 @@ useradd  ${USER} --gid ${USER} --uid ${uid} --home-dir ${HOME}
 
 # Permit the user to use docker if the socket is mounted
 if [[ -S /var/run/docker.sock && -n "$(which docker)" ]]; then
-	if ! getent group docker; then
-		groupadd docker
-	fi
+  if ! getent group docker; then
+    groupadd docker
+  fi
 
   # on docker4mac, the docker.sock is owned by root.
   gid=$(stat --format='%g' /var/run/docker.sock)
@@ -35,35 +35,35 @@ if [[ -S /var/run/docker.sock && -n "$(which docker)" ]]; then
     usermod -aG docker ${USER}
   fi
 
-	docker version &>>/dev/null || return=$?
-	[ ${return:-0} -eq 0 ] && export DOCKER_AVAILABLE=true
+  docker version &>>/dev/null || return=$?
+  [ ${return:-0} -eq 0 ] && export DOCKER_AVAILABLE=true
 fi
 
 #Assure that the home directory exists
 if [[ ! -d ${HOME} ]]; then
-	mkdir ${HOME}
+  mkdir ${HOME}
 fi
 # Detect if the home directory is mounted
 if [[ $(mount | grep "${HOME} " | wc -l) -ne 1 ]]; then
-	chown ${USER} ${HOME}
+  chown ${USER} ${HOME}
 
-	# Import the files present in the skel directory
-	for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
-		dst="${HOME}/$(basename $f)"
-		if [ -r $f -a ! -e $dst ]; then
-			cp -r $f $dst
-			chown -R ${USER}. $dst
-		fi
-	done
+  # Import the files present in the skel directory
+  for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
+    dst="${HOME}/$(basename $f)"
+    if [ -r $f -a ! -e $dst ]; then
+      cp -r $f $dst
+      chown -R ${USER}. $dst
+    fi
+  done
 else
-	export IS_HOME_MOUNTED=true
-	echo "The home directory is mounted so the features depending on files in it are disabled." >&2
+  export IS_HOME_MOUNTED=true
+  echo "The home directory is mounted so the features depending on files in it are disabled." >&2
 fi
 
 # Declare DISPLAY if the X socket is mounted
 # xhost +<container ip> is needed on the host side.
 if [[ -S /tmp/.X11-unix ]]; then
-	export DISPLAY=${DISPLAY:-:0}
+  export DISPLAY=${DISPLAY:-:0}
 fi
 
 # Give root access to everybody
@@ -72,9 +72,9 @@ chmod 0440 /etc/sudoers.d/full-sudo
 
 # If there's a profile file, execute it.
 for i in /etc/profile.d/*.sh ; do
-	if [[ -r $i ]]; then
-		. $i
-	fi
+  if [[ -r $i ]]; then
+    . $i
+  fi
 done
 unset i
 
@@ -84,7 +84,7 @@ echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >> /etc/login.defs
 # Is the first arg something to execute?
 maybebin="${1:-}"
 if [ -n "${maybebin}" -a "${maybebin}" == "${maybebin##*/}" -a -n "$(which ${maybebin##*/})" ]; then
-	unset DEFAULT_CMD SHELL
+  unset DEFAULT_CMD SHELL
 fi
 
 gosu ${USER} $(echo ${DEFAULT_CMD:-${SHELL:-}} ${@}) || return=$?
