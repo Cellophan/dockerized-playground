@@ -19,7 +19,7 @@ FROM ubuntu:rolling
 ENV DOCKER_IMAGE="cell/playground"
 
 COPY --from=gosu   /usr/local/bin/* /usr/local/bin/
-COPY --from=docker /usr/local/bin/* /usr/local/bin/
+COPY --from=docker /usr/local/bin/docker /usr/local/bin/
 
 #Basics
 RUN apt update &&\
