@@ -15,6 +15,8 @@ RUN set -x \
     && gosu nobody true \
     && apt-get purge -y --auto-remove ca-certificates wget
 
+FROM docker as docker
+
 FROM ubuntu:rolling
 ENV DOCKER_IMAGE="cell/playground"
 
