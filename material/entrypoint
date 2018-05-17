@@ -18,7 +18,7 @@ WORKDIR=${PWD}
 export WORKDIR SSH_AUTH_SOCK TERM
 
 groupadd ${USER} --gid ${GID}
-useradd  ${USER} --gid ${USER} --uid ${uid} --home-dir ${HOME}
+useradd ${USER} --gid ${USER} --uid ${uid} --home-dir ${HOME}
 
 # Permit the user to use docker if the socket is mounted
 if [[ -S /var/run/docker.sock && -n "$(which docker)" ]]; then
@@ -71,7 +71,7 @@ echo "ALL ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
 
 # If there's a profile file, execute it.
-for i in /etc/profile.d/*.sh ; do
+for i in /etc/profile.d/*.sh; do
   if [[ -r $i ]]; then
     . $i
   fi
@@ -79,7 +79,7 @@ done
 unset i
 
 # Propagate the PATH variable
-echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >> /etc/login.defs
+echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >>/etc/login.defs
 
 # Is the first arg something to execute?
 maybebin="${1:-}"
@@ -89,4 +89,3 @@ fi
 
 gosu ${USER} $(echo ${DEFAULT_CMD:-${SHELL:-}} ${@}) || return=$?
 exit ${return:-0}
-
