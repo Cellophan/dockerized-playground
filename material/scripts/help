@@ -22,4 +22,3 @@ echo "A lot of options are needed to start this image.
     For changing the default shell (if there s no command) -e SHELL=...
     For debug: -e DEBUG=1
 "
-

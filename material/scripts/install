@@ -16,4 +16,3 @@ cp /opt/payload/install/* ${INSTALL_DIR}/
 chmod a+x ${INSTALL_DIR}/*
 
 echo "Installer in place, now you can use the command(s): $(find /usr/local/bin/ -maxdepth 1 -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')"
-
