@@ -1,2 +1,2 @@
-# DebSandBox
-Sandbox for debian users
+# Dockerized playgroung
+Sandbox for ubuntu users
