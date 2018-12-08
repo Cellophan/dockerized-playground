@@ -78,11 +78,9 @@ for i in /etc/profile.d/*.sh; do
 done
 unset i
 
-# Propagate the PATH variable
-echo -e "ENV_PATH ${PATH}\nENV_SUPATH ${PATH}" >>/etc/login.defs
-
 # Is the first arg something to execute?
 maybebin="${1:-}"
+
 if [ -n "${maybebin}" -a "${maybebin}" == "${maybebin##*/}" -a -n "$(which ${maybebin##*/})" ]; then
   #unset DEFAULT_CMD SHELL
   gosu ${USER} $(echo ${@}) || return=$?
