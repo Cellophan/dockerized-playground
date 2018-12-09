@@ -12,7 +12,7 @@ if [ ! -d ${DEPLOY_DIR} -o "root" != "$(whoami)" ]; then
   exit 1
 fi
 
+chmod a+x /opt/payload/deploy/*
 cp /opt/payload/deploy/* ${DEPLOY_DIR}/
-chmod a+x ${DEPLOY_DIR}/*
 
-echo "Launcher in place, now you can use the command(s): $(find /usr/local/bin/ -maxdepth 1 -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')"
+echo "Launcher in place, now you can use the command(s): $(find /opt/payload/deploy -maxdepth 1 -type f -printf "%p " | sed 's/[^ ]*\/\([^/]*\) /\1 /g')"
