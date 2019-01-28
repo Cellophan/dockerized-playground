@@ -51,8 +51,10 @@ if [[ $(mount | grep "${HOME} " | wc -l) -ne 1 ]]; then
   for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
     dst="${HOME}/$(basename $f)"
     if [ -r $f -a ! -e $dst ]; then
-      cp -r $f $dst
+      #cp -r $f $dst
+      ln -s $f $dst
       chown -R ${USER}. $dst
+      chmod a+r $dst
     fi
   done
 else
