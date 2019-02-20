@@ -52,9 +52,9 @@ if [[ $(mount | grep "${HOME} " | wc -l) -ne 1 ]]; then
     dst="${HOME}/$(basename $f)"
     if [ -r $f -a ! -e $dst ]; then
       #cp -r $f $dst
+      chown ${USER}. $f
+      chmod a+r $f
       ln -s $f $dst
-      chown -R ${USER}. $dst
-      chmod a+r $dst
     fi
   done
 else
