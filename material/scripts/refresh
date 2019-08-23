@@ -2,7 +2,8 @@
 #Pull the repo for a newer version of this image
 
 if [ -z "${DOCKER_AVAILABLE:-}" ]; then
-  echo "No access to docker."
+  echo "No access to docker. Please run:"
+  echo "  docker pull ${DOCKER_IMAGE}"
   exit 1
 fi
 
