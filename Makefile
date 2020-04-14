@@ -8,6 +8,6 @@ BLAH=${CONTEXT}
 build:
 	docker build -t ${REGISTRY}/${IMAGE} ${CONTEXT}
 
-build-fresh:
+fresh:
 	docker build --pull --no-cache -t ${REGISTRY}/${IMAGE} ${CONTEXT}
 
