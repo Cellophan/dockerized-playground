@@ -1,4 +1,4 @@
-FROM ubuntu:rolling as gosu
+FROM ubuntu:latest as gosu
 
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -qy --no-install-recommends wget git ca-certificates gcc
@@ -8,7 +8,7 @@ RUN go get -u github.com/tianon/gosu
 
 FROM docker as docker
 
-FROM ubuntu:rolling
+FROM ubuntu:latest
 ENV DOCKER_IMAGE="cell/playground"
 
 COPY --from=gosu   /usr/local/bin/* /usr/local/bin/
