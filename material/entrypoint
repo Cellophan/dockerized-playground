@@ -85,7 +85,7 @@ unset i
 # Is the first arg something to execute?
 maybebin="${1:-}"
 
-if [[ -n "${maybebin}" -a "${maybebin}" == "${maybebin##*/}" -a -n "$(which ${maybebin##*/})" ]]; then
+if [ -n "${maybebin}" -a "${maybebin}" == "${maybebin##*/}" -a -n "$(which ${maybebin##*/})" ]; then
     #unset DEFAULT_CMD SHELL
     gosu ${USER} $(echo ${@}) || return=$?
 else
