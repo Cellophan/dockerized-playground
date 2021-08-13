@@ -16,7 +16,7 @@ COPY --from=docker /usr/local/bin/docker /usr/local/bin/
 
 #Basics
 RUN apt update &&\
-    DEBIAN_FRONTEND=noninteractive apt install -qy sudo vim git curl jq openssh-client &&\
+    DEBIAN_FRONTEND=noninteractive apt install -qy --no-install-recommends sudo vim git curl jq openssh-client ca-certificates &&\
     apt clean -y && rm -rf /var/lib/apt/lists/*
 
 COPY material/scripts     /usr/local/bin
