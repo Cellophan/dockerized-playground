@@ -1,4 +1,4 @@
-FROM ubuntu:rolling as gosu
+FROM ubuntu:latest as gosu
 
 RUN apt-get update
 # hadolint ignore=DL3008
@@ -11,7 +11,7 @@ RUN go get -u github.com/tianon/gosu
 # hadolint ignore=DL3006
 FROM docker as docker
 
-FROM ubuntu:rolling
+FROM ubuntu:latest
 ENV DOCKER_IMAGE="cell/playground"
 
 COPY --from=gosu   /usr/local/bin/* /usr/local/bin/
