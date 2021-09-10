@@ -7,7 +7,7 @@ steps:
     - name: docker
       image: plugins/docker
       settings:
-          repo: cell/czsh
+          repo: cell/playground
           username:
               from_secret: docker_username
           password:
