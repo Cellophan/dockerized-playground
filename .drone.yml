@@ -6,6 +6,7 @@ name: default
 steps:
     - name: docker
       image: plugins/docker
+      tag: "${DRONE_BRANCH/master/latest}"
       settings:
           repo: cell/playground
           username:
