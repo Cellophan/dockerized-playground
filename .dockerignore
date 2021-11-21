@@ -9,6 +9,10 @@ Session.vim
 .git
 .gitignore
 .drone.yml
+.tags
 README.md
 data
 docker-compose.yml
+
+bin
+src
