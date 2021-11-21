@@ -1,6 +1,7 @@
 # hadolint ignore=DL3006
 FROM docker as docker
 
+# hadolint ignore=DL3007
 FROM ubuntu:latest
 ENV DOCKER_IMAGE="cell/playground"
 
