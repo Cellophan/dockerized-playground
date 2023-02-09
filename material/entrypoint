@@ -77,15 +77,21 @@ echo "ALL ALL = NOPASSWD: ALL" >/etc/sudoers.d/full-sudo
 chmod 0440 /etc/sudoers.d/full-sudo
 
 # If there's a profile file, execute it.
+set -o allexport
+
 for i in /etc/profile.d/*.sh; do
     if [[ -r $i ]]; then
         . $i
     fi
 done
+
+set +o allexport
 unset i
 
 # Is the first arg something to execute?
 maybebin="${1:-}"
+
+[ -n "${DEBUG:-}" ] && env
 
 if [[ -n "${maybebin}" && "${maybebin}" == "${maybebin##*/}" && -n "$(which ${maybebin##*/})" ]]; then
     exec gosu ${USER} $(echo ${@})
