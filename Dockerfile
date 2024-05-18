@@ -7,6 +7,11 @@ ENV DOCKER_IMAGE="cell/playground"
 
 #Basics
 # hadolint ignore=DL3008
+RUN sed -i '/:1000:/d' /etc/passwd &&\
+    sed -i '/:1000:/d' /etc/group &&\
+    rm -rvf /home/ubuntu
+
+# hadolint ignore=DL3008
 RUN apt-get update &&\
     DEBIAN_FRONTEND=noninteractive apt-get install -qy --no-install-recommends sudo vim git curl jq openssh-client ca-certificates gosu &&\
     apt-get clean -y && rm -rf /var/lib/apt/lists/*
