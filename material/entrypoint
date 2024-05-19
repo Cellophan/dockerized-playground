@@ -49,7 +49,7 @@ if [[ ! -d ${HOME} ]]; then
 fi
 # Detect if the home directory is mounted
 if [[ $(mount | grep "${HOME} " | wc -l) -ne 1 ]]; then
-    chown ${USER} ${HOME}
+    chown ${USER}: ${HOME}
 
     # Import the files present in the skel directory
     for f in $(find /etc/skel -maxdepth 1 ! -path /etc/skel); do
