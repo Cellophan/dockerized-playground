@@ -19,7 +19,7 @@ export WORKDIR SSH_AUTH_SOCK TERM
 
 if [[ ${GID} -ne 0 ]]; then
     groupadd ${USER} --gid ${GID}
-    useradd ${USER} --gid ${USER} --uid ${uid} --home-dir ${HOME}
+    useradd ${USER} --gid ${USER} --uid ${uid} --home-dir ${HOME} --key UID_MAX=999999999 # For some pro cases
 fi
 
 # Permit the user to use docker if the socket is mounted
