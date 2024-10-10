@@ -33,6 +33,7 @@ if [[ -S /var/run/docker.sock && -n "$(which docker)" ]]; then
     if [[ $gid -eq 0 ]]; then
         usermod -aG root ${USER}
     else
+        [ -n "${DEBUG:-}" ] && cat /etc/group
         groupmod --gid $gid docker
         usermod -aG docker ${USER}
     fi
