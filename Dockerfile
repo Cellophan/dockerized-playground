@@ -12,15 +12,14 @@ RUN sed -i '/:1000:/d' /etc/passwd &&\
     rm -rvf /home/ubuntu
 
 # hadolint ignore=DL3008
-RUN apt-get update &&\
-    DEBIAN_FRONTEND=noninteractive apt-get install -qy --no-install-recommends sudo vim git curl jq openssh-client ca-certificates gosu &&\
-    apt-get clean -y && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get update &&\
+    DEBIAN_FRONTEND=noninteractive apt-get install -qy --no-install-recommends sudo vim git curl jq openssh-client ca-certificates gosu
 
 # hadolint ignore=DL3008
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 RUN apt-get update &&\
     DEBIAN_FRONTEND=noninteractive apt-get install -qy --no-install-recommends ca-certificates curl gnupg &&\
-    apt-get clean -y && rm -rf /var/lib/apt/lists/* &&\
     install -m 0755 -d /etc/apt/keyrings &&\
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&\
     chmod a+r /etc/apt/keyrings/docker.gpg &&\
@@ -29,8 +28,7 @@ RUN apt-get update &&\
         "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
         tee /etc/apt/sources.list.d/docker.list > /dev/null &&\
     apt-get update &&\
-    DEBIAN_FRONTEND=noninteractive apt-get install docker-ce-cli docker-buildx-plugin docker-compose-plugin &&\
-    apt-get clean -y && rm -rf /var/lib/apt/lists/*
+    DEBIAN_FRONTEND=noninteractive apt-get install docker-ce-cli docker-buildx-plugin docker-compose-plugin
 
 #COPY --from=docker /usr/local/bin/docker /usr/local/bin/
 COPY material/scripts     /usr/local/bin
