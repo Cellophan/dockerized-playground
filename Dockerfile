@@ -12,13 +12,14 @@ RUN sed -i '/:1000:/d' /etc/passwd &&\
     rm -rvf /home/ubuntu
 
 # hadolint ignore=DL3008
-RUN --mount=type=cache,target=/var/cache/apt \
+RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt/lists \
     apt-get update &&\
     DEBIAN_FRONTEND=noninteractive apt-get install -qy --no-install-recommends sudo vim git curl jq openssh-client ca-certificates gosu
 
 # hadolint ignore=DL3008
 # https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
-RUN apt-get update &&\
+RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt/lists \
+    apt-get update &&\
     DEBIAN_FRONTEND=noninteractive apt-get install -qy --no-install-recommends ca-certificates curl gnupg &&\
     install -m 0755 -d /etc/apt/keyrings &&\
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&\
